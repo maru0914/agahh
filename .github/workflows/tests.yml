@@ -17,7 +17,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           coverage: xdebug
 
       - name: Install Dependencies
@@ -29,4 +29,7 @@ jobs:
           php artisan key:generate
 
       - name: Run Tests
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
         run: php artisan test --compact --coverage --min=75
