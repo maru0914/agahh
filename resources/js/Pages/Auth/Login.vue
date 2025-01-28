@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
 
 defineProps<{
     canResetPassword?: boolean;
@@ -35,29 +34,28 @@ const submit = () => {
             {{ status }}
         </div>
 
+        <h1 class="mb-3 text-center text-2xl font-semibold tracking-tight">
+            Login
+        </h1>
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
+                <Input
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    placeholder="Email"
                     v-model="form.email"
                     required
                     autofocus
                     autocomplete="username"
                 />
-
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
+                <Input
                     id="password"
                     type="password"
+                    placeholder="Password"
                     class="mt-1 block w-full"
                     v-model="form.password"
                     required
@@ -77,21 +75,12 @@ const submit = () => {
             </div>
 
             <div class="mt-4 flex items-center justify-end">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton
+                <Button
                     class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
+                    >Log in
+                </Button>
             </div>
         </form>
     </GuestLayout>

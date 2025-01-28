@@ -39,7 +39,7 @@ const sendMessage = async () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto max-w-3xl px-3">
         <div class="mt-10 flex flex-col items-center">
             <img
                 src="/images/agahh.jpg"
