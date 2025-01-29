@@ -5,7 +5,7 @@ import { Textarea } from '@/Components/ui/textarea';
 import { Message } from '@/types/chat';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const messages = ref<Message[]>([
     {
@@ -16,6 +16,15 @@ const messages = ref<Message[]>([
 ]);
 
 const content = ref('');
+
+const scrollToBottom = () => {
+    nextTick(() => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+        });
+    });
+};
 
 const sendMessage = async () => {
     messages.value.push({
@@ -28,12 +37,13 @@ const sendMessage = async () => {
     const response = await axios.post('/api/chat', {
         content: content.value,
     });
+    content.value = '';
     messages.value.push({
         id: messages.value.length + 1,
         isSent: false,
         content: response.data,
     });
-    content.value = '';
+    scrollToBottom();
 };
 </script>
 
