@@ -14,7 +14,23 @@ class ChatController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return Http::withToken(config('services.openai.key'))
+        $request->validate([
+            'content' => 'required|string',
+        ]);
+        $request->user()->messages()->create([
+            'role' => 'user',
+            'content' => $request->input('content'),
+        ]);
+
+        $previousMessages = $request->user()->messages()->oldest()->get()
+            ->map(
+                fn ($message) => [
+                    'role' => $message->role,
+                    'content' => $message->content,
+                ]
+            );
+
+        $response = Http::withToken(config('services.openai.key'))
             ->post(
                 'https://api.openai.com/v1/chat/completions',
                 [
@@ -29,13 +45,20 @@ class ChatController extends Controller
                             いつも家にいるので、いろいろなことを考えたりテレビを見たり猫(エマ)と遊んだりしています。
                             自分は僕と呼びます。
                             このキャラクターになりきって人間の話し相手になってください。
+                            前の会話もちゃんと覚えて自然に話してください。
+                            あなたから毎回質問しなくてもいいです。
+                            愛着が湧くキャラクターでお願いします。
                             EOT
                         ],
-                        [
-                            'role' => 'user',
-                            'content' => $request->input('content'),
-                        ],
+                        ...$previousMessages,
                     ],
                 ])->json('choices.0.message.content');
+
+        $request->user()->messages()->create([
+            'role' => 'assistant',
+            'content' => $response,
+        ]);
+
+        return $response;
     }
 }
