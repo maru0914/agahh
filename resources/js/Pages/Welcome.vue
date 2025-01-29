@@ -7,17 +7,13 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { nextTick, ref } from 'vue';
 
-const props = defineProps<{
-    previousMessages: Array<Object>;
-}>();
-
-const messages = ref<Message[]>(
-    props.previousMessages.map((message: any) => ({
-        id: message.id,
-        isSent: message.role == 'user',
-        content: message.content,
-    })),
-);
+const messages = ref<Message[]>([
+    {
+        id: 1,
+        isSent: false,
+        content: 'やあ！僕はアガーだよ',
+    },
+]);
 
 const content = ref('');
 
