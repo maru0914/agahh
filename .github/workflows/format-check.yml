@@ -1,10 +1,10 @@
-name: Laravel Pint
+name: Format Check
 
 on:
   pull_request
 
 jobs:
-  laravel-pint:
+  format-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,11 +13,24 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Setup
+      - name: Setup PHP
         uses: ./.github/actions/setup
         with:
           php-version: '8.3'
           php-extensions: 'json, dom, curl, libxml, mbstring'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
 
       - name: Install Laravel Pint
         run: composer global require laravel/pint
