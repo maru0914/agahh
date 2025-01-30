@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -29,6 +32,25 @@ test('users can not authenticate with invalid password', function () {
     ]);
 
     $this->assertGuest();
+});
+
+test('validation errors are saved in session when rate limiting', function () {
+    $requestAvailableSeconds = 60;
+    Event::fake();
+    RateLimiter::shouldReceive('tooManyAttempts')->andReturn(true);
+    RateLimiter::shouldReceive('availableIn')->andReturn($requestAvailableSeconds);
+    $user = User::factory()->create();
+
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    Event::assertDispatched(Lockout::class);
+
+    $response
+        ->assertSessionHasErrors('email')
+        ->assertRedirect();
 });
 
 test('users can logout', function () {

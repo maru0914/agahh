@@ -20,6 +20,18 @@ test('reset password link can be requested', function () {
     Notification::assertSentTo($user, ResetPassword::class);
 });
 
+test('reset password link can not be requested with not existing email', function () {
+    Notification::fake();
+
+    $response = $this->post('/forgot-password', ['email' => 'test@example.com']);
+
+    Notification::assertNothingSent();
+
+    $response
+        ->assertSessionHasErrors('email')
+        ->assertRedirect();
+});
+
 test('reset password screen can be rendered', function () {
     Notification::fake();
 
@@ -57,4 +69,21 @@ test('password can be reset with valid token', function () {
 
         return true;
     });
+});
+
+test('password can not be reset with invalid token', function () {
+    $user = User::factory(['password' => 'password'])->create();
+
+    $response = $this->post('/reset-password', [
+        'token' => 'invalid-token',
+        'email' => $user->email,
+        'password' => 'new-password',
+        'password_confirmation' => 'new-password',
+    ]);
+
+    $response
+        ->assertSessionHasErrors('email')
+        ->assertRedirect();
+
+    $this->assertTrue(Hash::check('password', $user->refresh()->password));
 });
