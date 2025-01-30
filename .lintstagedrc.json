@@ -1,0 +1,4 @@
+{
+    "**/*.php*": "vendor/bin/pint --test",
+    "resources/js/**/*.{js,ts,vue}": "npm run lint"
+}
