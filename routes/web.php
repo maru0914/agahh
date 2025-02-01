@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\DiaryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', WelcomeController::class)->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::get('/', WelcomeController::class)->name('home');
+    Route::get('/diary', [DiaryController::class, 'index'])->name('diary.index');
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

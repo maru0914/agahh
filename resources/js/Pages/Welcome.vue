@@ -2,6 +2,7 @@
 import ChatMessage from '@/Components/ChatMessage.vue';
 import { Button } from '@/Components/ui/button';
 import { Textarea } from '@/Components/ui/textarea';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Message } from '@/types/chat';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -49,31 +50,33 @@ const sendMessage = async () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="mx-auto max-w-3xl px-3">
-        <div class="mt-10 flex flex-col items-center">
-            <img
-                src="/images/agahh.jpg"
-                alt="Agahh"
-                class="h-32 w-32 rounded-full"
-            />
-            <h2 class="text-xl font-bold">アガー</h2>
-        </div>
-        <div class="mt-4 space-y-4">
-            <ChatMessage
-                v-for="message in messages"
-                :message="message"
-                :key="message.id"
-            />
-        </div>
-        <form @submit.prevent="sendMessage()" class="mt-4">
-            <Textarea
-                class="my-4"
-                placeholder="アガーにメッセージを送る"
-                v-model="content"
-            />
-            <div class="flex justify-end">
-                <Button>送信</Button>
+    <AuthenticatedLayout>
+        <div class="mx-auto max-w-3xl px-3">
+            <div class="mt-10 flex flex-col items-center">
+                <img
+                    src="/images/agahh.jpg"
+                    alt="Agahh"
+                    class="h-32 w-32 rounded-full"
+                />
+                <h2 class="text-xl font-bold">アガー</h2>
             </div>
-        </form>
-    </div>
+            <div class="mt-4 space-y-4">
+                <ChatMessage
+                    v-for="message in messages"
+                    :message="message"
+                    :key="message.id"
+                />
+            </div>
+            <form @submit.prevent="sendMessage()" class="mt-4">
+                <Textarea
+                    class="my-4"
+                    placeholder="アガーにメッセージを送る"
+                    v-model="content"
+                />
+                <div class="flex justify-end">
+                    <Button>送信</Button>
+                </div>
+            </form>
+        </div>
+    </AuthenticatedLayout>
 </template>
