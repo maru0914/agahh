@@ -1,42 +1,99 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Diary } from '@/types/diary';
+import { Head, Link } from '@inertiajs/vue3';
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 
-const props = defineProps<{
-    diaries: Diary[];
+import { Button } from '@/Components/ui/button';
+import { CalenderDate } from '@/types/calender';
+
+const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
+
+defineProps<{
+    year: number;
+    month: number;
+    previousLink: string;
+    nextLink: string;
+    calenderDates?: CalenderDate[];
 }>();
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <div class="container mx-auto p-4">
-            <div class="flex flex-col">
-                <div class="w-full">
-                    <table class="min-w-full border border-gray-200 bg-white">
-                        <thead>
-                            <tr>
-                                <th class="border-b px-4 py-2">日付</th>
-                                <th class="border-b px-4 py-2">本文</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="diary in props.diaries"
-                                :key="diary.id"
-                                class="hover:bg-gray-100"
+        <Head title="日記" />
+        <section class="relative py-8 sm:p-8">
+            <div class="mx-auto w-full max-w-7xl px-4 lg:px-8 xl:px-14">
+                <div class="mb-5 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-4">
+                        <h5
+                            class="text-xl font-semibold leading-8 text-gray-900"
+                        >
+                            {{ year }}年{{ month }}月
+                        </h5>
+                        <div class="flex items-center gap-2">
+                            <Link :href="previousLink" :as="'button'">
+                                <ChevronLeft
+                                    class="cursor-pointer rounded text-gray-500 transition-all duration-300 hover:bg-gray-100 hover:text-gray-900"
+                                />
+                            </Link>
+                            <Link :href="nextLink" :as="'button'">
+                                <ChevronRight
+                                    class="cursor-pointer rounded text-gray-500 transition-all duration-300 hover:bg-gray-100 hover:text-gray-900"
+                                />
+                            </Link>
+                        </div>
+                        <Link :href="route('diary.index')" :as="'button'">
+                            <Button variant="outline"> 今月 </Button>
+                        </Link>
+                    </div>
+                </div>
+                <div class="border border-gray-200">
+                    <div
+                        class="grid grid-cols-7 divide-gray-200 border-b border-gray-200 bg-gray-50"
+                    >
+                        <div
+                            class="flex justify-center border-r border-gray-200 p-3.5"
+                            v-for="(day, index) in weekDays"
+                            :key="index"
+                        >
+                            <span class="text-sm font-medium text-gray-500">
+                                {{ day }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 divide-gray-200">
+                        <div
+                            class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-3.5 transition-all duration-300 max-lg:items-center lg:h-28 xl:aspect-auto"
+                            v-for="calenderDate in calenderDates"
+                            :key="calenderDate.id"
+                            :class="{
+                                'cursor-pointer bg-gray-50 hover:bg-white':
+                                    calenderDate.isCurrentMonth,
+                                'bg-gray-300/20': !calenderDate.isCurrentMonth,
+                            }"
+                        >
+                            <span
+                                class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-gray-500"
+                                :class="{
+                                    'bg-green-200': calenderDate.isToday,
+                                }"
                             >
-                                <td class="border-b px-4 py-2">
-                                    {{ diary.date }}
-                                </td>
-                                <td class="border-b px-4 py-2">
-                                    {{ diary.content }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                {{ calenderDate.date }}
+                            </span>
+                            <div
+                                v-if="calenderDate.isChecked"
+                                class="flex justify-end"
+                            >
+                                <img
+                                    src="/images/agahh-icon.png"
+                                    alt="application logo"
+                                    class="h-8 w-8"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </AuthenticatedLayout>
 </template>
 
