@@ -21,7 +21,7 @@ class DiaryController extends Controller
     ) {
 
         $yearMonth = YearMonth::fromString($request->input('yearMonth'));
-        $calenderDates = $action->handle($yearMonth);
+        $calenderDates = $action->handle($request->user(), $yearMonth);
 
         return Inertia::render('Diary/Index', [
             'year' => $yearMonth->getYear(),

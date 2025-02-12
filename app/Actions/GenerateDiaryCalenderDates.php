@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Classes\DiaryCalenderDate;
 use App\Models\Diary;
+use App\Models\User;
 use App\ValueObjects\YearMonth;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -16,6 +17,8 @@ class GenerateDiaryCalenderDates
     /** @var Collection<DiaryCalenderDate> */
     protected Collection $diaryCalenderDates;
 
+    protected User $user;
+
     protected CarbonImmutable $yearMonth;
 
     /**
@@ -23,8 +26,9 @@ class GenerateDiaryCalenderDates
      *
      * @return Collection<DiaryCalenderDate>
      */
-    public function handle(?YearMonth $yearMonth = null): Collection
+    public function handle(User $user, ?YearMonth $yearMonth = null): Collection
     {
+        $this->user = $user;
         $yearMonth ??= YearMonth::current();
         $this->yearMonth = $yearMonth->toCarbonImmutable();
         $this->diaryCalenderDates = collect();
@@ -81,6 +85,7 @@ class GenerateDiaryCalenderDates
     protected function addDiaryCalenderDates(CarbonImmutable $startDate, int $days): void
     {
         $diaryDates = Diary::sameMonth($startDate)
+            ->whereBelongsTo($this->user)
             ->select(['id', 'date'])
             ->get()
             ->keyBy('date');
