@@ -10,7 +10,6 @@ class DiaryCalenderDate
         public int $date,
         public bool $isToday,
         public bool $isCurrentMonth,
-        public bool $isChecked,
     ) {}
 
     public function toArray(): array
@@ -21,7 +20,6 @@ class DiaryCalenderDate
             'date' => $this->date,
             'isToday' => $this->isToday,
             'isCurrentMonth' => $this->isCurrentMonth,
-            'isChecked' => $this->isChecked,
         ];
     }
 }

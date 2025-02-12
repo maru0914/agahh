@@ -14,13 +14,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+        /****************************************
+         * Users
+         ****************************************/
+        $user = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
 
-        Diary::factory(10)->create();
+        /****************************************
+         * Diaries
+         ****************************************/
+        $diaryDates = collect(range(1, 100))
+            ->map(fn ($daysAgo) => now()->subDays($daysAgo)->format('Y-m-d'))
+            ->shuffle()
+            ->take(30);
+
+        $diaryDates->each(function ($date) use ($user) {
+            Diary::factory()
+                ->for($user)
+                ->create(['date' => $date]);
+        });
     }
 }

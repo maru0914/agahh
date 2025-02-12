@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Classes\DiaryCalenderDate;
+use App\Models\Diary;
 use App\ValueObjects\YearMonth;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -13,7 +14,9 @@ class GenerateDiaryCalenderDates
     protected static int $dateId = 1;
 
     /** @var Collection<DiaryCalenderDate> */
-    protected Collection $dates;
+    protected Collection $diaryCalenderDates;
+
+    protected CarbonImmutable $yearMonth;
 
     /**
      * Execute the action.
@@ -23,73 +26,95 @@ class GenerateDiaryCalenderDates
     public function handle(?YearMonth $yearMonth = null): Collection
     {
         $yearMonth ??= YearMonth::current();
-        $target = $yearMonth->toCarbonImmutable();
-        $this->dates = collect();
-        $days = $target->daysInMonth;
+        $this->yearMonth = $yearMonth->toCarbonImmutable();
+        $this->diaryCalenderDates = collect();
 
-        for ($i = 1; $i <= $days; $i++) {
-            if ($i === 1) {
-                $this->addPreviousMonthDays($target);
-            }
-            $this->dates->push(
-                new DiaryCalenderDate(
-                    id: self::$dateId++,
-                    diaryId: null,
-                    date: $i,
-                    isToday: $target->isToday(),
-                    isCurrentMonth: true,
-                    isChecked: false,
-                ));
-            if ($i === $days) {
-                $this->addNextMonthDays($target);
-            }
-            $target = $target->addDay();
-        }
+        $this->addPreviousMonthDates();
+        $this->addCurrentMonthDates();
+        $this->addNextMonthDates();
 
-        return $this->dates;
+        return $this->diaryCalenderDates;
     }
 
-    private function addPreviousMonthDays(CarbonImmutable $target): void
+    /**
+     * Add previous month days to the collection.
+     */
+    protected function addPreviousMonthDates(): void
     {
-        $firstDayOfMonth = $target->startOfMonth();
-        $dayOfWeekOfFirstDay = $firstDayOfMonth->dayOfWeek;
+        $firstDateOfThisMonth = $this->yearMonth->startOfMonth();
+        $previousMonthDatesCount = $this->countPreviousMonthDates($firstDateOfThisMonth);
 
-        $isSunday = $dayOfWeekOfFirstDay === CarbonInterface::SUNDAY;
-        $additionalDays = $isSunday ? 6 : $dayOfWeekOfFirstDay - CarbonInterface::MONDAY;
+        $this->addDiaryCalenderDates(
+            startDate: $firstDateOfThisMonth->subDays($previousMonthDatesCount),
+            days: $previousMonthDatesCount
+        );
+    }
 
-        for ($j = $additionalDays; $j > 0; $j--) {
-            $date = $firstDayOfMonth->subDays($j);
-            $this->dates->push(
+    /**
+     * Add current month days to the collection.
+     */
+    protected function addCurrentMonthDates(): void
+    {
+        $this->addDiaryCalenderDates(
+            startDate: $this->yearMonth->startOfMonth(),
+            days: $this->yearMonth->daysInMonth
+        );
+    }
+
+    /**
+     * Add next month days to the collection.
+     */
+    protected function addNextMonthDates(): void
+    {
+        $lastDayOfThisMonth = $this->yearMonth->endOfMonth();
+        $additionalDays = $this->countNextMonthDates($lastDayOfThisMonth);
+
+        $this->addDiaryCalenderDates(
+            startDate: $lastDayOfThisMonth->addDay(),
+            days: $additionalDays
+        );
+    }
+
+    /**
+     * Add diary calendar dates to the collection.
+     */
+    protected function addDiaryCalenderDates(CarbonImmutable $startDate, int $days): void
+    {
+        $diaryDates = Diary::sameMonth($startDate)
+            ->select(['id', 'date'])
+            ->get()
+            ->keyBy('date');
+
+        for ($i = 0; $i < $days; $i++) {
+            $date = $startDate->addDays($i);
+            $this->diaryCalenderDates->push(
                 new DiaryCalenderDate(
                     id: self::$dateId++,
-                    diaryId: null,
+                    diaryId: $diaryDates->firstWhere('date', $date->format('Y-m-d H:i:s'))?->id,
                     date: $date->day,
-                    isToday: false,
-                    isCurrentMonth: false,
-                    isChecked: false,
+                    isToday: $date->isToday(),
+                    isCurrentMonth: $date->isSameMonth($this->yearMonth),
                 ));
         }
     }
 
-    private function addNextMonthDays(CarbonImmutable $target): void
+    /**
+     * Count the previous month dates.
+     */
+    protected function countPreviousMonthDates(CarbonImmutable $firstDayOfMonth): int
     {
-        $lastDayOfMonth = $target->endOfMonth();
-        $dayOfWeekOfLastDay = $lastDayOfMonth->dayOfWeek;
+        $dayOfWeek = $firstDayOfMonth->dayOfWeek;
 
-        $isSunday = $dayOfWeekOfLastDay === CarbonInterface::SUNDAY;
-        $additionalDays = $isSunday ? 0 : 7 - $dayOfWeekOfLastDay;
+        return $dayOfWeek === CarbonInterface::SUNDAY ? 6 : $dayOfWeek - CarbonInterface::MONDAY;
+    }
 
-        for ($j = 1; $j <= $additionalDays; $j++) {
-            $date = $lastDayOfMonth->addDays($j);
-            $this->dates->push(
-                new DiaryCalenderDate(
-                    id: self::$dateId++,
-                    diaryId: null,
-                    date: $date->day,
-                    isToday: false,
-                    isCurrentMonth: false,
-                    isChecked: false,
-                ));
-        }
+    /**
+     * Count the next month dates.
+     */
+    protected function countNextMonthDates(CarbonImmutable $lastDayOfMonth): int
+    {
+        $dayOfWeek = $lastDayOfMonth->dayOfWeek;
+
+        return $dayOfWeek === CarbonInterface::SUNDAY ? 0 : 7 - $dayOfWeek;
     }
 }

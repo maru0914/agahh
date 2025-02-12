@@ -11,6 +11,7 @@ const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
 defineProps<{
     year: number;
     month: number;
+    isCurrentYearMonth: boolean;
     previousLink: string;
     nextLink: string;
     calenderDates?: CalenderDate[];
@@ -41,8 +42,12 @@ defineProps<{
                                 />
                             </Link>
                         </div>
-                        <Link :href="route('diary.index')" :as="'button'">
-                            <Button variant="outline"> 今月 </Button>
+                        <Link
+                            v-if="!isCurrentYearMonth"
+                            :href="route('diary.index')"
+                            :as="'button'"
+                        >
+                            <Button variant="outline"> 今月</Button>
                         </Link>
                     </div>
                 </div>
@@ -80,7 +85,7 @@ defineProps<{
                                 {{ calenderDate.date }}
                             </span>
                             <div
-                                v-if="calenderDate.isChecked"
+                                v-if="calenderDate.diaryId"
                                 class="flex justify-end"
                             >
                                 <img

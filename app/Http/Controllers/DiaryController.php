@@ -26,6 +26,7 @@ class DiaryController extends Controller
         return Inertia::render('Diary/Index', [
             'year' => $yearMonth->getYear(),
             'month' => $yearMonth->getMonth(),
+            'isCurrentYearMonth' => $yearMonth->isCurrentYearMonth(),
             'previousLink' => route('diary.index', ['yearMonth' => (string) $yearMonth->previous()]),
             'nextLink' => route('diary.index', ['yearMonth' => (string) $yearMonth->next()]),
             'calenderDates' => $calenderDates,

@@ -19,7 +19,7 @@ class DiaryFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'date' => now()->subDays(rand(1, 100))->format('Y-m-d'),
+            'date' => fake()->dateTimeBetween('-100 days')->format('Y-m-d'),
             'content' => fake()->paragraph,
         ];
     }

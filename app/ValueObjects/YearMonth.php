@@ -12,10 +12,11 @@ final class YearMonth
 
     private function __construct(string $yearMonth)
     {
-        if (! self::isValidYearMonth($yearMonth)) {
+        $this->value = $yearMonth;
+
+        if (! $this->isValidYearMonth()) {
             throw new InvalidArgumentException('Invalid YearMonth format. Expected YYYYMM.');
         }
-        $this->value = $yearMonth;
     }
 
     /*********************************************************
@@ -89,8 +90,13 @@ final class YearMonth
         return $this->value === (string) $other;
     }
 
-    public static function isValidYearMonth(string $value): bool
+    public function isValidYearMonth(): bool
     {
-        return preg_match('/^\d{4}(0[1-9]|1[0-2])$/', $value) === 1;
+        return preg_match('/^\d{4}(0[1-9]|1[0-2])$/', $this->value) === 1;
+    }
+
+    public function isCurrentYearMonth(): bool
+    {
+        return $this->equals(self::current());
     }
 }
