@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Classes\DiaryCalenderDate;
+use App\Classes\DiaryCalendarDate;
 use App\Models\Diary;
 use App\Models\User;
 use App\ValueObjects\YearMonth;
@@ -10,12 +10,12 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 
-class GenerateDiaryCalenderDates
+class GenerateDiaryCalendarDates
 {
     protected static int $dateId = 1;
 
-    /** @var Collection<DiaryCalenderDate> */
-    protected Collection $diaryCalenderDates;
+    /** @var Collection<DiaryCalendarDate> */
+    protected Collection $diaryCalendarDates;
 
     protected User $user;
 
@@ -24,20 +24,20 @@ class GenerateDiaryCalenderDates
     /**
      * Execute the action.
      *
-     * @return Collection<DiaryCalenderDate>
+     * @return Collection<DiaryCalendarDate>
      */
     public function handle(User $user, ?YearMonth $yearMonth = null): Collection
     {
         $this->user = $user;
         $yearMonth ??= YearMonth::current();
         $this->yearMonth = $yearMonth->toCarbonImmutable();
-        $this->diaryCalenderDates = collect();
+        $this->diaryCalendarDates = collect();
 
         $this->addPreviousMonthDates();
         $this->addCurrentMonthDates();
         $this->addNextMonthDates();
 
-        return $this->diaryCalenderDates;
+        return $this->diaryCalendarDates;
     }
 
     /**
@@ -48,7 +48,7 @@ class GenerateDiaryCalenderDates
         $firstDateOfThisMonth = $this->yearMonth->startOfMonth();
         $previousMonthDatesCount = $this->countPreviousMonthDates($firstDateOfThisMonth);
 
-        $this->addDiaryCalenderDates(
+        $this->addDiaryCalendarDates(
             startDate: $firstDateOfThisMonth->subDays($previousMonthDatesCount),
             days: $previousMonthDatesCount
         );
@@ -59,7 +59,7 @@ class GenerateDiaryCalenderDates
      */
     protected function addCurrentMonthDates(): void
     {
-        $this->addDiaryCalenderDates(
+        $this->addDiaryCalendarDates(
             startDate: $this->yearMonth->startOfMonth(),
             days: $this->yearMonth->daysInMonth
         );
@@ -73,7 +73,7 @@ class GenerateDiaryCalenderDates
         $lastDayOfThisMonth = $this->yearMonth->endOfMonth();
         $additionalDays = $this->countNextMonthDates($lastDayOfThisMonth);
 
-        $this->addDiaryCalenderDates(
+        $this->addDiaryCalendarDates(
             startDate: $lastDayOfThisMonth->addDay(),
             days: $additionalDays
         );
@@ -82,7 +82,7 @@ class GenerateDiaryCalenderDates
     /**
      * Add diary calendar dates to the collection.
      */
-    protected function addDiaryCalenderDates(CarbonImmutable $startDate, int $days): void
+    protected function addDiaryCalendarDates(CarbonImmutable $startDate, int $days): void
     {
         $diaryDates = Diary::sameMonth($startDate)
             ->whereBelongsTo($this->user)
@@ -92,8 +92,8 @@ class GenerateDiaryCalenderDates
 
         for ($i = 0; $i < $days; $i++) {
             $date = $startDate->addDays($i);
-            $this->diaryCalenderDates->push(
-                new DiaryCalenderDate(
+            $this->diaryCalendarDates->push(
+                new DiaryCalendarDate(
                     id: self::$dateId++,
                     diaryId: $diaryDates->firstWhere('date', $date->format('Y-m-d H:i:s'))?->id,
                     date: $date->day,

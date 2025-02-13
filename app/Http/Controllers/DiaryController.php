@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\GenerateDiaryCalenderDates;
+use App\Actions\GenerateDiaryCalendarDates;
 use App\Http\Requests\DiaryIndexRequest;
 use App\Http\Requests\StoreDiaryRequest;
 use App\Http\Requests\UpdateDiaryRequest;
@@ -17,11 +17,11 @@ class DiaryController extends Controller
      */
     public function index(
         DiaryIndexRequest $request,
-        GenerateDiaryCalenderDates $action
+        GenerateDiaryCalendarDates $action
     ) {
 
         $yearMonth = YearMonth::fromString($request->input('yearMonth'));
-        $calenderDates = $action->handle($request->user(), $yearMonth);
+        $calendarDates = $action->handle($request->user(), $yearMonth);
 
         return Inertia::render('Diary/Index', [
             'year' => $yearMonth->getYear(),
@@ -29,7 +29,7 @@ class DiaryController extends Controller
             'isCurrentYearMonth' => $yearMonth->isCurrentYearMonth(),
             'previousLink' => route('diary.index', ['yearMonth' => (string) $yearMonth->previous()]),
             'nextLink' => route('diary.index', ['yearMonth' => (string) $yearMonth->next()]),
-            'calenderDates' => $calenderDates,
+            'calendarDates' => $calendarDates,
         ]);
     }
 
@@ -54,7 +54,7 @@ class DiaryController extends Controller
      */
     public function show(Diary $diary)
     {
-        //
+        dd($diary);
     }
 
     /**

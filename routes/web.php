@@ -9,6 +9,7 @@ use Inertia\Inertia;
 Route::middleware('auth')->group(function () {
     Route::get('/', WelcomeController::class)->name('home');
     Route::get('/diary', [DiaryController::class, 'index'])->name('diary.index');
+    Route::get('/diary/{diary:date}', [DiaryController::class, 'show'])->name('diary.show');
 });
 
 Route::get('/dashboard', function () {

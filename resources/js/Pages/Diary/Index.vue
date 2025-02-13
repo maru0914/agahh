@@ -4,17 +4,17 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 
 import { Button } from '@/Components/ui/button';
-import { CalenderDate } from '@/types/calender';
+import { CalendarDate } from '@/types/calendar';
 
 const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
 
 defineProps<{
-    year: number;
-    month: number;
+    year: string;
+    month: string;
     isCurrentYearMonth: boolean;
     previousLink: string;
     nextLink: string;
-    calenderDates?: CalenderDate[];
+    calendarDates?: CalendarDate[];
 }>();
 </script>
 
@@ -68,24 +68,24 @@ defineProps<{
                     <div class="grid grid-cols-7 divide-gray-200">
                         <div
                             class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-3.5 transition-all duration-300 max-lg:items-center lg:h-28 xl:aspect-auto"
-                            v-for="calenderDate in calenderDates"
-                            :key="calenderDate.id"
+                            v-for="calendarDate in calendarDates"
+                            :key="calendarDate.id"
                             :class="{
                                 'cursor-pointer bg-gray-50 hover:bg-white':
-                                    calenderDate.isCurrentMonth,
-                                'bg-gray-300/20': !calenderDate.isCurrentMonth,
+                                    calendarDate.isCurrentMonth,
+                                'bg-gray-300/20': !calendarDate.isCurrentMonth,
                             }"
                         >
                             <span
                                 class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-gray-500"
                                 :class="{
-                                    'bg-green-200': calenderDate.isToday,
+                                    'bg-green-200': calendarDate.isToday,
                                 }"
                             >
-                                {{ calenderDate.date }}
+                                {{ calendarDate.date }}
                             </span>
                             <div
-                                v-if="calenderDate.diaryId"
+                                v-if="calendarDate.diaryId"
                                 class="flex justify-end"
                             >
                                 <img
