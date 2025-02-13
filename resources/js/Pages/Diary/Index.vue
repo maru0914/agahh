@@ -8,14 +8,19 @@ import { CalendarDate } from '@/types/calendar';
 
 const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
 
-defineProps<{
-    year: string;
-    month: string;
+const props = defineProps<{
+    year: number;
+    month: number;
     isCurrentYearMonth: boolean;
     previousLink: string;
     nextLink: string;
     calendarDates?: CalendarDate[];
 }>();
+
+const formatDate = (date: number) => {
+    const padZero = (value: number) => String(value).padStart(2, '0');
+    return `${props.year}-${padZero(props.month)}-${padZero(date)}`;
+};
 </script>
 
 <template>
@@ -44,7 +49,7 @@ defineProps<{
                         </div>
                         <Link
                             v-if="!isCurrentYearMonth"
-                            :href="route('diary.index')"
+                            :href="route('diaries.index')"
                             :as="'button'"
                         >
                             <Button variant="outline"> 今月</Button>
@@ -66,35 +71,46 @@ defineProps<{
                         </div>
                     </div>
                     <div class="grid grid-cols-7 divide-gray-200">
-                        <div
-                            class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-3.5 transition-all duration-300 max-lg:items-center lg:h-28 xl:aspect-auto"
+                        <Link
                             v-for="calendarDate in calendarDates"
                             :key="calendarDate.id"
-                            :class="{
-                                'cursor-pointer bg-gray-50 hover:bg-white':
-                                    calendarDate.isCurrentMonth,
-                                'bg-gray-300/20': !calendarDate.isCurrentMonth,
-                            }"
+                            :href="
+                                route(
+                                    'diaries.show',
+                                    formatDate(calendarDate.date),
+                                )
+                            "
+                            :as="'button'"
                         >
-                            <span
-                                class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-gray-500"
+                            <div
+                                class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-3.5 transition-all duration-300 max-lg:items-center lg:h-28 xl:aspect-auto"
                                 :class="{
-                                    'bg-green-200': calendarDate.isToday,
+                                    'cursor-pointer bg-gray-50 hover:bg-white':
+                                        calendarDate.isCurrentMonth,
+                                    'bg-gray-300/20':
+                                        !calendarDate.isCurrentMonth,
                                 }"
                             >
-                                {{ calendarDate.date }}
-                            </span>
-                            <div
-                                v-if="calendarDate.diaryId"
-                                class="flex justify-end"
-                            >
-                                <img
-                                    src="/images/agahh-icon.png"
-                                    alt="application logo"
-                                    class="h-8 w-8"
-                                />
+                                <span
+                                    class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-gray-500"
+                                    :class="{
+                                        'bg-green-200': calendarDate.isToday,
+                                    }"
+                                >
+                                    {{ calendarDate.date }}
+                                </span>
+                                <div
+                                    v-if="calendarDate.diaryId"
+                                    class="flex justify-end"
+                                >
+                                    <img
+                                        src="/images/agahh-icon.png"
+                                        alt="application logo"
+                                        class="h-8 w-8"
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -40,8 +40,8 @@ const showingNavigationDropdown = ref(false);
                                     チャット
                                 </NavLink>
                                 <NavLink
-                                    :href="route('diary.index')"
-                                    :active="route().current('diary.index')"
+                                    :href="route('diaries.index')"
+                                    :active="route().current('diaries.index')"
                                 >
                                     日記
                                 </NavLink>
@@ -153,8 +153,8 @@ const showingNavigationDropdown = ref(false);
                             チャット
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            :href="route('diary.index')"
-                            :active="route().current('diary.index')"
+                            :href="route('diaries.index')"
+                            :active="route().current('diaries.index')"
                         >
                             日記
                         </ResponsiveNavLink>

@@ -27,8 +27,8 @@ class DiaryController extends Controller
             'year' => $yearMonth->getYear(),
             'month' => $yearMonth->getMonth(),
             'isCurrentYearMonth' => $yearMonth->isCurrentYearMonth(),
-            'previousLink' => route('diary.index', ['yearMonth' => (string) $yearMonth->previous()]),
-            'nextLink' => route('diary.index', ['yearMonth' => (string) $yearMonth->next()]),
+            'previousLink' => route('diaries.index', ['yearMonth' => (string) $yearMonth->previous()]),
+            'nextLink' => route('diaries.index', ['yearMonth' => (string) $yearMonth->next()]),
             'calendarDates' => $calendarDates,
         ]);
     }

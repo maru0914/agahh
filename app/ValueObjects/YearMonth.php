@@ -42,14 +42,14 @@ final class YearMonth
      * Getters
      *******************************************************/
 
-    public function getYear(): string
+    public function getYear(): int
     {
-        return substr($this->value, 0, 4);
+        return (int) substr($this->value, 0, 4);
     }
 
-    public function getMonth(): string
+    public function getMonth(): int
     {
-        return substr($this->value, 4, 2);
+        return (int) substr($this->value, 4, 2);
     }
 
     /*********************************************************
