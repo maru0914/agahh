@@ -117,5 +117,3 @@ const formatDate = (date: number) => {
         </section>
     </AuthenticatedLayout>
 </template>
-
-<style scoped></style>

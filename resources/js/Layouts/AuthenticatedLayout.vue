@@ -41,7 +41,7 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
                                 <NavLink
                                     :href="route('diaries.index')"
-                                    :active="route().current('diaries.index')"
+                                    :active="route().current('diaries.*')"
                                 >
                                     日記
                                 </NavLink>

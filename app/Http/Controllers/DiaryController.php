@@ -54,7 +54,9 @@ class DiaryController extends Controller
      */
     public function show(Diary $diary)
     {
-        dd($diary);
+        return Inertia::render('Diary/Show', [
+            'diary' => $diary,
+        ]);
     }
 
     /**
