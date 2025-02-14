@@ -21,8 +21,6 @@ class Diary extends Model
     {
         return [
             'date' => 'datetime:Y-m-d',
-            'created_at' => 'datetime:Y-m-d H:i:s',
-            'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
 

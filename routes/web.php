@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', WelcomeController::class)->name('home');
-    Route::resource('diaries', DiaryController::class)->except(['create', 'store']);
+    Route::resource('diaries', DiaryController::class)->except(['create', 'store', 'edit']);
     Route::get('/diaries/{date}/create', [DiaryController::class, 'create'])->name('diaries.create');
     Route::post('/diaries/{date}', [DiaryController::class, 'store'])->name('diaries.store');
 });

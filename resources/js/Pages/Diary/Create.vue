@@ -41,7 +41,9 @@ const form = useForm({
                             <div v-if="form.errors.content">
                                 {{ form.errors.content }}
                             </div>
-                            <Button type="submit">保存</Button>
+                            <div class="flex justify-end">
+                                <Button type="submit">保存</Button>
+                            </div>
                         </form>
                     </div>
                 </div>

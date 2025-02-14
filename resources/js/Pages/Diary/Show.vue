@@ -1,16 +1,33 @@
 <script setup lang="ts">
 import { Button } from '@/Components/ui/button';
+import { Textarea } from '@/Components/ui/textarea';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Diary } from '@/types/diary';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-defineProps<{
-    diary: {
-        date: string;
-        content: string;
-        created_at: string;
-        updated_at: string;
-    };
+const props = defineProps<{
+    diary: Diary;
 }>();
+
+const form = useForm({
+    content: props.diary.content,
+});
+
+const isEditing = ref(false);
+
+const updateDiary = () => {
+    isEditing.value = false;
+    console.log(props.diary);
+    form.patch(route('diaries.update', props.diary.date));
+};
+
+const deleteDiary = () => {
+    if (!confirm('本当に削除しますか？')) {
+        return;
+    }
+    router.delete(route('diaries.destroy', props.diary.date));
+};
 </script>
 
 <template>
@@ -35,29 +52,42 @@ defineProps<{
                     <p class="mt-1 text-end text-sm text-gray-500">
                         更新日時: {{ diary.updated_at }}
                     </p>
-                    <div class="mt-5">
-                        <p class="leading-6 text-gray-800">
-                            {{ diary.content }}
-                        </p>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end gap-4">
-                    <Link
-                        :href="route('diaries.edit', diary.date)"
-                        :as="'button'"
-                    >
-                        <Button> 編集 </Button>
-                    </Link>
-                    <form
-                        :action="route('diaries.destroy', diary.date)"
-                        method="post"
-                        onsubmit="return confirm('本当に削除しますか？');"
-                    >
-                        <input type="hidden" name="_method" value="delete" />
-                        <Button variant="destructive" type="submit">
-                            削除
-                        </Button>
-                    </form>
+                    <template v-if="isEditing">
+                        <form @submit.prevent="updateDiary">
+                            <div class="mt-5">
+                                <Textarea v-model="form.content" />
+                                <div v-if="form.errors.content">
+                                    {{ form.errors.content }}
+                                </div>
+                            </div>
+                            <div class="mt-6 flex justify-end gap-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    @click="isEditing = false"
+                                >
+                                    キャンセル
+                                </Button>
+                                <Button type="submit">保存</Button>
+                            </div>
+                        </form>
+                    </template>
+
+                    <template v-else>
+                        <div class="mt-5">
+                            <p class="leading-6 text-gray-800">
+                                {{ diary.content }}
+                            </p>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-4">
+                            <Button @click="isEditing = true">編集</Button>
+                            <form @submit.prevent="deleteDiary">
+                                <Button variant="destructive" type="submit">
+                                    削除
+                                </Button>
+                            </form>
+                        </div>
+                    </template>
                 </div>
             </div>
         </section>

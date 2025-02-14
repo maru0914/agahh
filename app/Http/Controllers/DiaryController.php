@@ -6,6 +6,7 @@ use App\Actions\GenerateDiaryCalendarDates;
 use App\Http\Requests\Diary\IndexRequest;
 use App\Http\Requests\Diary\StoreRequest;
 use App\Http\Requests\Diary\UpdateRequest;
+use App\Http\Resources\DiaryResource;
 use App\Models\Diary;
 use App\ValueObjects\YearMonth;
 use Illuminate\Http\Request;
@@ -44,13 +45,12 @@ class DiaryController extends Controller
             ->first();
 
         if ($existingDiary) {
-            return redirect()->route('diaries.show', $existingDiary->date->format('Y-m-d'));
+            return to_route('diaries.index');
         }
 
-        return Inertia::render('Diary/Create',
-            [
-                'date' => $date,
-            ]
+        return Inertia::render('Diary/Create', [
+            'date' => $date,
+        ]
         );
     }
 
@@ -65,7 +65,7 @@ class DiaryController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        return redirect()->route('diaries.index');
+        return to_route('diaries.show', $date);
     }
 
     /**
@@ -74,16 +74,8 @@ class DiaryController extends Controller
     public function show(Diary $diary)
     {
         return Inertia::render('Diary/Show', [
-            'diary' => $diary,
+            'diary' => DiaryResource::make($diary),
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Diary $diary)
-    {
-        //
     }
 
     /**
@@ -91,7 +83,11 @@ class DiaryController extends Controller
      */
     public function update(UpdateRequest $request, Diary $diary)
     {
-        //
+        $diary->update([
+            'content' => $request->input('content'),
+        ]);
+
+        return to_route('diaries.show', $diary->date->format('Y-m-d'));
     }
 
     /**
@@ -99,6 +95,8 @@ class DiaryController extends Controller
      */
     public function destroy(Diary $diary)
     {
-        //
+        $diary->delete();
+
+        return to_route('diaries.index');
     }
 }
