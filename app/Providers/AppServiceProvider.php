@@ -30,5 +30,7 @@ class AppServiceProvider extends ServiceProvider
                 ->whereBelongsTo(Auth::user())
                 ->firstOrFail();
         });
+
+        Route::pattern('date', '\d{4}-\d{2}-\d{2}');
     }
 }

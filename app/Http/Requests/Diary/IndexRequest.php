@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Diary;
 
 use App\ValueObjects\YearMonth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class DiaryIndexRequest extends FormRequest
+class IndexRequest extends FormRequest
 {
     public function rules(): array
     {

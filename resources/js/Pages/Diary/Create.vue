@@ -1,0 +1,51 @@
+<script setup lang="ts">
+import { Button } from '@/Components/ui/button';
+import { Textarea } from '@/Components/ui/textarea';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+
+defineProps<{ date: string }>();
+
+const form = useForm({
+    content: '',
+});
+</script>
+
+<template>
+    <AuthenticatedLayout>
+        <Head :title="`${date} - 日記作成`" />
+        <section class="relative py-8 sm:p-8">
+            <div class="mx-auto w-full max-w-3xl px-4 lg:px-8">
+                <Link :href="route('diaries.index')" :as="'button'">
+                    <button
+                        class="text-sm font-medium text-gray-500 hover:text-gray-700"
+                    >
+                        ← 一覧に戻る
+                    </button>
+                </Link>
+                <h1 class="mt-4 text-2xl font-semibold text-gray-900">
+                    {{ date }}の日記
+                </h1>
+                <div class="mt-4 rounded-lg bg-white p-6 shadow">
+                    <div class="mt-5">
+                        <form
+                            @submit.prevent="
+                                form.post(route('diaries.store', { date }))
+                            "
+                        >
+                            <Textarea
+                                class="my-4"
+                                placeholder="今日は何をしましたか？"
+                                v-model="form.content"
+                            />
+                            <div v-if="form.errors.content">
+                                {{ form.errors.content }}
+                            </div>
+                            <Button type="submit">保存</Button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </AuthenticatedLayout>
+</template>

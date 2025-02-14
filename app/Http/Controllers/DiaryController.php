@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Actions\GenerateDiaryCalendarDates;
-use App\Http\Requests\DiaryIndexRequest;
-use App\Http\Requests\StoreDiaryRequest;
-use App\Http\Requests\UpdateDiaryRequest;
+use App\Http\Requests\Diary\IndexRequest;
+use App\Http\Requests\Diary\StoreRequest;
+use App\Http\Requests\Diary\UpdateRequest;
 use App\Models\Diary;
 use App\ValueObjects\YearMonth;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DiaryController extends Controller
@@ -16,7 +17,7 @@ class DiaryController extends Controller
      * Display a listing of the resource.
      */
     public function index(
-        DiaryIndexRequest $request,
+        IndexRequest $request,
         GenerateDiaryCalendarDates $action
     ) {
 
@@ -36,17 +37,35 @@ class DiaryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, string $date)
     {
-        //
+        $existingDiary = Diary::where('date', $date)
+            ->whereBelongsTo($request->user())
+            ->first();
+
+        if ($existingDiary) {
+            return redirect()->route('diaries.show', $existingDiary->date->format('Y-m-d'));
+        }
+
+        return Inertia::render('Diary/Create',
+            [
+                'date' => $date,
+            ]
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDiaryRequest $request)
+    public function store(StoreRequest $request, string $date)
     {
-        //
+        Diary::create([
+            'user_id' => $request->user()->id,
+            'date' => $date,
+            'content' => $request->input('content'),
+        ]);
+
+        return redirect()->route('diaries.index');
     }
 
     /**
@@ -70,7 +89,7 @@ class DiaryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDiaryRequest $request, Diary $diary)
+    public function update(UpdateRequest $request, Diary $diary)
     {
         //
     }

@@ -8,10 +8,9 @@ use Inertia\Inertia;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', WelcomeController::class)->name('home');
-    Route::get('/diaries', [DiaryController::class, 'index'])->name('diaries.index');
-    Route::get('/diaries/{diary}', [DiaryController::class, 'show'])->name('diaries.show');
-    Route::get('/diaries/{diary}/edit', [DiaryController::class, 'edit'])->name('diaries.edit');
-    Route::delete('/diaries/{diary}', [DiaryController::class, 'destroy'])->name('diaries.destroy');
+    Route::resource('diaries', DiaryController::class)->except(['create', 'store']);
+    Route::get('/diaries/{date}/create', [DiaryController::class, 'create'])->name('diaries.create');
+    Route::post('/diaries/{date}', [DiaryController::class, 'store'])->name('diaries.store');
 });
 
 Route::get('/dashboard', function () {

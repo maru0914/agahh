@@ -75,10 +75,15 @@ const formatDate = (date: number) => {
                             v-for="calendarDate in calendarDates"
                             :key="calendarDate.id"
                             :href="
-                                route(
-                                    'diaries.show',
-                                    formatDate(calendarDate.date),
-                                )
+                                calendarDate.diaryId
+                                    ? route(
+                                          'diaries.show',
+                                          formatDate(calendarDate.date),
+                                      )
+                                    : route(
+                                          'diaries.create',
+                                          formatDate(calendarDate.date),
+                                      )
                             "
                             :as="'button'"
                         >
