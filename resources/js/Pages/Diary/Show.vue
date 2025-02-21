@@ -16,9 +16,12 @@ const form = useForm({
 
 const isEditing = ref(false);
 
+const addDiaryComment = () => {
+    router.post(route('diaries.comments.store', props.diary.date));
+};
+
 const updateDiary = () => {
     isEditing.value = false;
-    console.log(props.diary);
     form.patch(route('diaries.update', props.diary.date));
 };
 
@@ -75,7 +78,9 @@ const deleteDiary = () => {
 
                     <template v-else>
                         <div class="mt-5">
-                            <p class="leading-6 text-gray-800">
+                            <p
+                                class="whitespace-pre-wrap leading-6 text-gray-800"
+                            >
                                 {{ diary.content }}
                             </p>
                         </div>
@@ -89,6 +94,30 @@ const deleteDiary = () => {
                         </div>
                     </template>
                 </div>
+            </div>
+            <div v-if="diary.comment">
+                <div class="mx-auto mt-4 w-full max-w-3xl px-4 lg:px-8">
+                    <div class="mt-4 rounded-lg bg-white p-6 shadow">
+                        <div class="flex items-center">
+                            <div class="mr-4 min-w-8 max-w-10">
+                                <img
+                                    src="/images/agahh-icon.png"
+                                    alt="application logo"
+                                />
+                            </div>
+                            <p
+                                class="mt-1 whitespace-pre-wrap rounded-md bg-lime-100 px-3 py-2 text-sm text-gray-800"
+                            >
+                                {{ diary.comment }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="mt-4 flex justify-center">
+                <form @submit.prevent="addDiaryComment">
+                    <Button type="submit">アガーに見てもらう</Button>
+                </form>
             </div>
         </section>
     </AuthenticatedLayout>

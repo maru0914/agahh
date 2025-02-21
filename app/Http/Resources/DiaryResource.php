@@ -17,6 +17,7 @@ class DiaryResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'date' => $this->date->format('Y-m-d'),
+            'comment' => $this->whenLoaded('comment', fn () => $this->comment->content),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];

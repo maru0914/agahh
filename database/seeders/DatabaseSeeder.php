@@ -3,9 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Diary;
+use App\Models\DiaryComment;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Log;
+use Random\RandomException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -35,5 +38,24 @@ class DatabaseSeeder extends Seeder
                 ->for($user)
                 ->create(['date' => $date]);
         });
+
+        /****************************************
+         * Diary Comments
+         ****************************************/
+
+        $diaries = Diary::all();
+
+        $diaries->each(function ($diary) {
+            try {
+                if (random_int(0, 1)) {
+                    DiaryComment::factory()
+                        ->for($diary)
+                        ->create();
+                }
+            } catch (RandomException $e) {
+                Log::info('RandomException: '.$e->getMessage());
+            }
+        });
+
     }
 }
