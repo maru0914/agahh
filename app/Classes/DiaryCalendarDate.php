@@ -11,15 +11,4 @@ class DiaryCalendarDate
         public bool $isToday,
         public bool $isCurrentMonth,
     ) {}
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'diaryId' => $this->diaryId,
-            'date' => $this->date,
-            'isToday' => $this->isToday,
-            'isCurrentMonth' => $this->isCurrentMonth,
-        ];
-    }
 }

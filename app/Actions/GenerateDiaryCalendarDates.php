@@ -70,7 +70,7 @@ class GenerateDiaryCalendarDates
      */
     protected function addNextMonthDates(): void
     {
-        $lastDayOfThisMonth = $this->yearMonth->endOfMonth();
+        $lastDayOfThisMonth = $this->yearMonth->endOfMonth()->startOfDay();
         $additionalDays = $this->countNextMonthDates($lastDayOfThisMonth);
 
         $this->addDiaryCalendarDates(

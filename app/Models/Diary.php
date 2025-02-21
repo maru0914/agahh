@@ -35,8 +35,8 @@ class Diary extends Model
     public function scopeSameMonth(Builder $query, CarbonImmutable|Carbon $date): void
     {
         $query->whereBetween('date', [
-            $date->startOfMonth(),
-            $date->endOfMonth(),
+            $date->startOfMonth()->toDateString(),
+            $date->endOfMonth()->toDateString(),
         ]);
     }
 }
