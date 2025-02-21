@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
-test('can chat', function () {
+it('can chat', function () {
     Http::fake([
         'api.openai.com/*' => '
         {
