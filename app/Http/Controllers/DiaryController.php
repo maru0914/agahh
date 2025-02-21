@@ -74,7 +74,9 @@ class DiaryController extends Controller
     public function show(Diary $diary)
     {
         return Inertia::render('Diary/Show', [
-            'diary' => DiaryResource::make($diary),
+            'diary' => DiaryResource::make(
+                $diary->load('comment')
+            ),
         ]);
     }
 
@@ -83,9 +85,7 @@ class DiaryController extends Controller
      */
     public function update(UpdateRequest $request, Diary $diary)
     {
-        $diary->update([
-            'content' => $request->input('content'),
-        ]);
+        $diary->update($request->validated());
 
         return to_route('diaries.show', $diary->date->format('Y-m-d'));
     }
