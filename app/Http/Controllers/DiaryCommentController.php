@@ -17,6 +17,16 @@ class DiaryCommentController
             return to_route('diaries.show', $diary->date->format('Y-m-d'));
         }
 
+        $previousDiaries = Diary::where('date', '<', $diary->date)
+            ->oldest('date')
+            ->get()
+            ->map(
+                fn ($diary) => [
+                    'role' => 'user',
+                    'content' => $diary->content,
+                ]
+            );
+
         $response = Http::withToken(config('services.openai.key'))
             ->post(
                 'https://api.openai.com/v1/chat/completions',
@@ -32,13 +42,15 @@ class DiaryCommentController
                             いつも家にいるので、いろいろなことを考えたりテレビを見たり猫(エマ)と遊んだりしています。
                             自分は僕と呼びます。
                             このキャラクターになりきって、以下の日記にコメントしてください。
+                            複数の日付の日記を渡しますので、他の日付の日記の内容も含めて、'対象:'と記載がある日記にコメントしてください。
                             前向きになれるようなポジティブなコメントやクスッと笑えるようなコメントがいいです。
                             言われる人が楽しい気分になれるようなコメントをお願いします。
                             EOT
                         ],
+                        ...$previousDiaries,
                         [
                             'role' => 'user',
-                            'content' => $diary->date->format('Y-m-d').$diary->content,
+                            'content' => '対象:¥n'.$diary->date->format('Y-m-d').': ¥n'.$diary->content,
                         ],
                     ],
                 ])->json('choices.0.message.content');
