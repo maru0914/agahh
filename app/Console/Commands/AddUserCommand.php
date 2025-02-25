@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class AddUserCommand extends Command
 {
@@ -30,10 +31,12 @@ class AddUserCommand extends Command
         $email = $this->argument('email');
         $password = $this->argument('password');
 
-        User::factory()->create([
+        User::create([
             'name' => $name,
             'email' => $email,
             'password' => $password,
+            'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
         ]);
 
         $this->info('User created successfully');
