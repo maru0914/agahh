@@ -17,6 +17,7 @@ const messages = ref<Message[]>([
 ]);
 
 const content = ref('');
+const isComposing = ref(false); // IME入力中かどうか
 
 const scrollToBottom = () => {
     nextTick(() => {
@@ -28,23 +29,35 @@ const scrollToBottom = () => {
 };
 
 const sendMessage = async () => {
+    if (!content.value.trim()) return;
+
     messages.value.push({
         id: messages.value.length + 1,
         isSent: true,
         content: content.value,
     });
+    const sentMessage = content.value;
+    content.value = '';
 
     // アガーからの返信
     const response = await axios.post('/api/chat', {
-        content: content.value,
+        content: sentMessage,
     });
-    content.value = '';
     messages.value.push({
         id: messages.value.length + 1,
         isSent: false,
         content: response.data,
     });
     scrollToBottom();
+};
+
+const handleKeyDown = (event: KeyboardEvent) => {
+    if (isComposing.value) return;
+
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
 };
 </script>
 
@@ -72,8 +85,17 @@ const sendMessage = async () => {
                     class="my-4"
                     placeholder="アガーにメッセージを送る"
                     v-model="content"
+                    @keydown="handleKeyDown"
+                    @compositionstart="isComposing = true"
+                    @compositionend="isComposing = false"
                 />
-                <div class="flex justify-end">
+                <div class="flex items-center justify-end gap-3">
+                    <span
+                        v-if="content"
+                        class="text-right text-sm text-gray-500"
+                    >
+                        Shift + Enterで改行 / Enterで送信
+                    </span>
                     <Button>送信</Button>
                 </div>
             </form>
