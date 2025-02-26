@@ -54,7 +54,7 @@ const sendMessage = async () => {
 const handleKeyDown = (event: KeyboardEvent) => {
     if (isComposing.value) return;
 
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault();
         sendMessage();
     }
@@ -89,13 +89,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
                     @compositionstart="isComposing = true"
                     @compositionend="isComposing = false"
                 />
-                <div class="flex items-center justify-end gap-3">
-                    <span
-                        v-if="content"
-                        class="text-right text-sm text-gray-500"
-                    >
-                        Shift + Enterで改行 / Enterで送信
-                    </span>
+                <div class="mt-2 flex justify-end">
                     <Button>送信</Button>
                 </div>
             </form>

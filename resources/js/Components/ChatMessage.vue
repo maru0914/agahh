@@ -23,7 +23,7 @@ defineProps<{
         >
             <div class="flex items-center">
                 <p
-                    class="py-2.5 text-sm font-normal text-gray-900 dark:text-white"
+                    class="whitespace-pre-wrap py-2.5 text-sm font-normal text-gray-900 dark:text-white"
                 >
                     {{ message.content }}
                 </p>
