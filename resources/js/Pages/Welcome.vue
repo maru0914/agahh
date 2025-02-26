@@ -6,7 +6,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Message } from '@/types/chat';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { nextTick, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 const messages = ref<Message[]>([
     {
@@ -18,6 +18,16 @@ const messages = ref<Message[]>([
 
 const content = ref('');
 const isComposing = ref(false); // IME入力中かどうか
+
+const userAgent = navigator.userAgent.toLowerCase();
+const isMac = computed(() => userAgent.includes('mac'));
+const isWindows = computed(() => userAgent.includes('win'));
+
+const sendShortcutMessage = computed(() => {
+    if (isMac.value) return 'Cmd + Enter で送信';
+    if (isWindows.value) return 'Ctrl + Enter で送信';
+    return '';
+});
 
 const scrollToBottom = () => {
     nextTick(() => {
@@ -89,7 +99,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
                     @compositionstart="isComposing = true"
                     @compositionend="isComposing = false"
                 />
-                <div class="mt-2 flex justify-end">
+                <div class="flex items-center justify-end gap-3">
+                    <span
+                        v-if="content"
+                        class="text-right text-sm text-gray-500"
+                    >
+                        {{ sendShortcutMessage }}
+                    </span>
                     <Button>送信</Button>
                 </div>
             </form>
