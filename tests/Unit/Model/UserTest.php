@@ -8,7 +8,14 @@ pest()->extend(Tests\TestCase::class)
 
 it('can get a child diaries', function () {
     $user = User::factory()->create();
-    $diaries = Diary::factory(2)->create(['user_id' => $user->id]);
+    $diaries = Diary::factory()
+        ->count(2)
+        ->for($user)
+        ->sequence(
+            ['date' => '2021-01-01'],
+            ['date' => '2021-01-02']
+        )
+        ->create();
 
     expect($user->diaries->first())
         ->toBeInstanceOf(Diary::class)
