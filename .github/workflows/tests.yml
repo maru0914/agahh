@@ -10,6 +10,16 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: agahh_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -30,6 +40,5 @@ jobs:
 
       - name: Run Tests
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ":memory:"
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: php artisan test --compact --coverage --min=75

@@ -24,7 +24,7 @@ it('can show multiple diaries', function () {
         $diaryDates = [
             '2024-12-30', '2025-01-01', '2025-01-03', '2025-01-31', '2025-02-01',
         ];
-        Diary::factory(5)
+        $diaries = Diary::factory(5)
             ->for($user)
             ->sequence(
                 fn (Sequence $sequence) => ['date' => $diaryDates[$sequence->index]],
@@ -38,7 +38,7 @@ it('can show multiple diaries', function () {
             ->has('calendarDates', 35) // 5weeks
             ->has('calendarDates.0', fn (Assert $page) => $page
                 ->where('date', 30)
-                ->where('diaryId', 1)
+                ->where('diaryId', $diaries[0]->id)
                 ->etc()
             )
             ->has('calendarDates.1', fn (Assert $page) => $page
@@ -48,22 +48,22 @@ it('can show multiple diaries', function () {
             )
             ->has('calendarDates.2', fn (Assert $page) => $page
                 ->where('date', 1)
-                ->where('diaryId', 2)
+                ->where('diaryId', $diaries[1]->id)
                 ->etc()
             )
             ->has('calendarDates.4', fn (Assert $page) => $page
                 ->where('date', 3)
-                ->where('diaryId', 3)
+                ->where('diaryId', $diaries[2]->id)
                 ->etc()
             )
             ->has('calendarDates.32', fn (Assert $page) => $page
                 ->where('date', 31)
-                ->where('diaryId', 4)
+                ->where('diaryId', $diaries[3]->id)
                 ->etc()
             )
             ->has('calendarDates.33', fn (Assert $page) => $page
                 ->where('date', 1)
-                ->where('diaryId', 5)
+                ->where('diaryId', $diaries[4]->id)
                 ->etc()
             )
             ->has('calendarDates.34', fn (Assert $page) => $page
