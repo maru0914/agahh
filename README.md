@@ -21,7 +21,8 @@ Agahh は、アガーというキャラクターとコミュニケーション�
 - PHPテストフレームワーク: [Pest](https://pestphp.com/)
 - DB: [SQLite](https://www.sqlite.org/)
 - フロントビルド: [Vite](https://ja.vitejs.dev/)
-- CI/CD: [GitHub Actions](https://docs.github.com/ja/actions)
+- CI: [GitHub Actions](https://docs.github.com/ja/actions)
+- デプロイ先: [Laravel Cloud](https://cloud.laravel.com)
 
 ## 環境構築
 - [Laravel Herd](https://herd.laravel.com/)をインストール
