@@ -96,7 +96,7 @@ class GenerateDiaryCalendarDates
                 new DiaryCalendarDate(
                     id: self::$dateId++,
                     diaryId: $diaryDates->firstWhere('date', $date->format('Y-m-d H:i:s'))?->id,
-                    date: $date->day,
+                    date: $date->format('Y-m-d'),
                     isToday: $date->isToday(),
                     isCurrentMonth: $date->isSameMonth($this->yearMonth),
                 ));

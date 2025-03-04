@@ -7,7 +7,7 @@ class DiaryCalendarDate
     public function __construct(
         public int $id,
         public ?int $diaryId,
-        public int $date,
+        public string $date,
         public bool $isToday,
         public bool $isCurrentMonth,
     ) {}

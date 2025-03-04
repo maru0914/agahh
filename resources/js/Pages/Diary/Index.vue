@@ -8,7 +8,7 @@ import { CalendarDate } from '@/types/calendar';
 
 const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
 
-const props = defineProps<{
+defineProps<{
     year: number;
     month: number;
     isCurrentYearMonth: boolean;
@@ -17,9 +17,9 @@ const props = defineProps<{
     calendarDates?: CalendarDate[];
 }>();
 
-const formatDate = (date: number) => {
-    const padZero = (value: number) => String(value).padStart(2, '0');
-    return `${props.year}-${padZero(props.month)}-${padZero(date)}`;
+const getDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.getDate();
 };
 </script>
 
@@ -76,14 +76,8 @@ const formatDate = (date: number) => {
                             :key="calendarDate.id"
                             :href="
                                 calendarDate.diaryId
-                                    ? route(
-                                          'diaries.show',
-                                          formatDate(calendarDate.date),
-                                      )
-                                    : route(
-                                          'diaries.create',
-                                          formatDate(calendarDate.date),
-                                      )
+                                    ? route('diaries.show', calendarDate.date)
+                                    : route('diaries.create', calendarDate.date)
                             "
                             :as="'button'"
                         >
@@ -102,7 +96,7 @@ const formatDate = (date: number) => {
                                         'bg-green-200': calendarDate.isToday,
                                     }"
                                 >
-                                    {{ calendarDate.date }}
+                                    {{ getDate(calendarDate.date) }}
                                 </span>
                                 <div
                                     v-if="calendarDate.diaryId"
