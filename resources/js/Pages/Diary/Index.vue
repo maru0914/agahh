@@ -88,7 +88,7 @@ const formatDate = (date: number) => {
                             :as="'button'"
                         >
                             <div
-                                class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-3.5 transition-all duration-300 max-lg:items-center lg:h-28 xl:aspect-auto"
+                                class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-2 transition-all duration-300 max-lg:items-center md:min-h-[80px] lg:h-28 xl:aspect-auto"
                                 :class="{
                                     'cursor-pointer bg-gray-50 hover:bg-white':
                                         calendarDate.isCurrentMonth,
@@ -111,7 +111,7 @@ const formatDate = (date: number) => {
                                     <img
                                         src="/images/agahh-icon.png"
                                         alt="application logo"
-                                        class="h-8 w-8"
+                                        class="h-6 w-6 md:h-8 md:w-8"
                                     />
                                 </div>
                             </div>
