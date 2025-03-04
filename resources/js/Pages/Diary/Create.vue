@@ -3,11 +3,19 @@ import { Button } from '@/Components/ui/button';
 import { Textarea } from '@/Components/ui/textarea';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-defineProps<{ date: string }>();
+const props = defineProps<{ date: string }>();
 
 const form = useForm({
     content: '',
+});
+
+const yearMonth = computed(() => {
+    const dateObject = new Date(props.date);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    return year + month;
 });
 </script>
 
@@ -16,7 +24,10 @@ const form = useForm({
         <Head :title="`${date} - 日記作成`" />
         <section class="relative py-8 sm:p-8">
             <div class="mx-auto w-full max-w-3xl px-4 lg:px-8">
-                <Link :href="route('diaries.index')" :as="'button'">
+                <Link
+                    :href="route('diaries.index', { yearMonth })"
+                    :as="'button'"
+                >
                     <button
                         class="text-sm font-medium text-gray-500 hover:text-gray-700"
                     >
