@@ -37,37 +37,37 @@ it('can show multiple diaries', function () {
             ->component('Diary/Index')
             ->has('calendarDates', 35) // 5weeks
             ->has('calendarDates.0', fn (Assert $page) => $page
-                ->where('date', 30)
+                ->where('date', '2024-12-30')
                 ->where('diaryId', $diaries[0]->id)
                 ->etc()
             )
             ->has('calendarDates.1', fn (Assert $page) => $page
-                ->where('date', 31)
+                ->where('date', '2024-12-31')
                 ->where('diaryId', null)
                 ->etc()
             )
             ->has('calendarDates.2', fn (Assert $page) => $page
-                ->where('date', 1)
+                ->where('date', '2025-01-01')
                 ->where('diaryId', $diaries[1]->id)
                 ->etc()
             )
             ->has('calendarDates.4', fn (Assert $page) => $page
-                ->where('date', 3)
+                ->where('date', '2025-01-03')
                 ->where('diaryId', $diaries[2]->id)
                 ->etc()
             )
             ->has('calendarDates.32', fn (Assert $page) => $page
-                ->where('date', 31)
+                ->where('date', '2025-01-31')
                 ->where('diaryId', $diaries[3]->id)
                 ->etc()
             )
             ->has('calendarDates.33', fn (Assert $page) => $page
-                ->where('date', 1)
+                ->where('date', '2025-02-01')
                 ->where('diaryId', $diaries[4]->id)
                 ->etc()
             )
             ->has('calendarDates.34', fn (Assert $page) => $page
-                ->where('date', 2)
+                ->where('date', '2025-02-02')
                 ->where('diaryId', null)
                 ->etc()
             )

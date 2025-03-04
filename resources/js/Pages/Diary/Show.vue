@@ -4,7 +4,7 @@ import { Textarea } from '@/Components/ui/textarea';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Diary } from '@/types/diary';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
     diary: Diary;
@@ -31,6 +31,13 @@ const deleteDiary = () => {
     }
     router.delete(route('diaries.destroy', props.diary.date));
 };
+
+const yearMonth = computed(() => {
+    const dateObject = new Date(props.diary.date);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    return year + month;
+});
 </script>
 
 <template>
@@ -38,7 +45,10 @@ const deleteDiary = () => {
         <Head :title="`${diary.date}の日記`" />
         <section class="relative py-8 sm:p-8">
             <div class="mx-auto w-full max-w-3xl px-4 lg:px-8">
-                <Link :href="route('diaries.index')" :as="'button'">
+                <Link
+                    :href="route('diaries.index', { yearMonth })"
+                    :as="'button'"
+                >
                     <button
                         class="text-sm font-medium text-gray-500 hover:text-gray-700"
                     >

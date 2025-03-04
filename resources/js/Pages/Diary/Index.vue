@@ -8,7 +8,7 @@ import { CalendarDate } from '@/types/calendar';
 
 const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
 
-const props = defineProps<{
+defineProps<{
     year: number;
     month: number;
     isCurrentYearMonth: boolean;
@@ -17,9 +17,9 @@ const props = defineProps<{
     calendarDates?: CalendarDate[];
 }>();
 
-const formatDate = (date: number) => {
-    const padZero = (value: number) => String(value).padStart(2, '0');
-    return `${props.year}-${padZero(props.month)}-${padZero(date)}`;
+const getDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.getDate();
 };
 </script>
 
@@ -76,19 +76,13 @@ const formatDate = (date: number) => {
                             :key="calendarDate.id"
                             :href="
                                 calendarDate.diaryId
-                                    ? route(
-                                          'diaries.show',
-                                          formatDate(calendarDate.date),
-                                      )
-                                    : route(
-                                          'diaries.create',
-                                          formatDate(calendarDate.date),
-                                      )
+                                    ? route('diaries.show', calendarDate.date)
+                                    : route('diaries.create', calendarDate.date)
                             "
                             :as="'button'"
                         >
                             <div
-                                class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-3.5 transition-all duration-300 max-lg:items-center lg:h-28 xl:aspect-auto"
+                                class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-2 transition-all duration-300 max-lg:items-center md:min-h-[80px] lg:h-28 xl:aspect-auto"
                                 :class="{
                                     'cursor-pointer bg-gray-50 hover:bg-white':
                                         calendarDate.isCurrentMonth,
@@ -102,7 +96,7 @@ const formatDate = (date: number) => {
                                         'bg-green-200': calendarDate.isToday,
                                     }"
                                 >
-                                    {{ calendarDate.date }}
+                                    {{ getDate(calendarDate.date) }}
                                 </span>
                                 <div
                                     v-if="calendarDate.diaryId"
@@ -111,7 +105,7 @@ const formatDate = (date: number) => {
                                     <img
                                         src="/images/agahh-icon.png"
                                         alt="application logo"
-                                        class="h-8 w-8"
+                                        class="h-6 w-6 md:h-8 md:w-8"
                                     />
                                 </div>
                             </div>
