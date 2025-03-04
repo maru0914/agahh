@@ -9,6 +9,15 @@ class WelcomeController extends Controller
 {
     public function __invoke(Request $request)
     {
-        return Inertia::render('Welcome');
+        return Inertia::render('Welcome',
+            [
+                'messagesInToday' => $request->user()
+                    ->messages()
+                    ->today()
+                    ->oldest()
+                    ->limit(50)
+                    ->get(),
+            ]
+        );
     }
 }
