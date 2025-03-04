@@ -6,12 +6,16 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Message } from '@/types/chat';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
+
+const props = defineProps<{
+    messagesInToday?: Message[];
+}>();
 
 const messages = ref<Message[]>([
     {
         id: 1,
-        isSent: false,
+        role: 'assistant',
         content: 'やあ！僕はアガーだよ',
     },
 ]);
@@ -43,7 +47,7 @@ const sendMessage = async () => {
 
     messages.value.push({
         id: messages.value.length + 1,
-        isSent: true,
+        role: 'user',
         content: content.value,
     });
     const sentMessage = content.value;
@@ -55,7 +59,7 @@ const sendMessage = async () => {
     });
     messages.value.push({
         id: messages.value.length + 1,
-        isSent: false,
+        role: 'assistant',
         content: response.data,
     });
     scrollToBottom();
@@ -69,6 +73,16 @@ const handleKeyDown = (event: KeyboardEvent) => {
         sendMessage();
     }
 };
+
+onMounted(() => {
+    messages.value.push(
+        ...(props.messagesInToday?.map((message, index) => ({
+            id: index + 1,
+            content: message.content,
+            role: message.role,
+        })) ?? []),
+    );
+});
 </script>
 
 <template>

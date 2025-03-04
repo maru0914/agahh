@@ -1,5 +1,5 @@
 export interface Message {
     id: number;
-    isSent: boolean;
     content: string;
+    role: 'user' | 'assistant';
 }
