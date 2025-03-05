@@ -46,7 +46,8 @@ const yearMonth = computed(() => {
                         >
                             <Textarea
                                 class="my-4"
-                                placeholder="今日は何をしましたか？"
+                                rows="15"
+                                placeholder="今日はどんな1日だった？"
                                 v-model="form.content"
                             />
                             <div v-if="form.errors.content">
