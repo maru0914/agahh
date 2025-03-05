@@ -10,6 +10,7 @@ use App\Http\Resources\DiaryResource;
 use App\Models\Diary;
 use App\ValueObjects\YearMonth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class DiaryController extends Controller
@@ -40,18 +41,11 @@ class DiaryController extends Controller
      */
     public function create(Request $request, string $date)
     {
-        $existingDiary = Diary::where('date', $date)
-            ->whereBelongsTo($request->user())
-            ->first();
-
-        if ($existingDiary) {
-            return to_route('diaries.index');
-        }
+        Gate::authorize('create', [Diary::class, $date]);
 
         return Inertia::render('Diary/Create', [
             'date' => $date,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -59,6 +53,8 @@ class DiaryController extends Controller
      */
     public function store(StoreRequest $request, string $date)
     {
+        Gate::authorize('create', [Diary::class, $date]);
+
         Diary::create([
             'user_id' => $request->user()->id,
             'date' => $date,
@@ -73,6 +69,8 @@ class DiaryController extends Controller
      */
     public function show(Diary $diary)
     {
+        Gate::authorize('view', $diary);
+
         return Inertia::render('Diary/Show', [
             'diary' => DiaryResource::make(
                 $diary->load('comment')
@@ -85,6 +83,8 @@ class DiaryController extends Controller
      */
     public function update(UpdateRequest $request, Diary $diary)
     {
+        Gate::authorize('update', $diary);
+
         $diary->update($request->validated());
 
         return to_route('diaries.show', $diary->date->format('Y-m-d'));
@@ -95,6 +95,8 @@ class DiaryController extends Controller
      */
     public function destroy(Diary $diary)
     {
+        Gate::authorize('delete', $diary);
+
         $diary->delete();
 
         return to_route('diaries.index');

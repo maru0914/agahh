@@ -21,6 +21,10 @@ const getDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.getDate();
 };
+
+const isTodayOrBefore = (calendarDate: CalendarDate) => {
+    return calendarDate.date <= new Date().toISOString().slice(0, 10);
+};
 </script>
 
 <template>
@@ -80,12 +84,14 @@ const getDate = (dateString: string) => {
                                     : route('diaries.create', calendarDate.date)
                             "
                             :as="'button'"
+                            :disabled="!isTodayOrBefore(calendarDate)"
                         >
                             <div
                                 class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-2 transition-all duration-300 max-lg:items-center md:min-h-[80px] lg:h-28 xl:aspect-auto"
                                 :class="{
                                     'cursor-pointer bg-gray-50 hover:bg-white':
-                                        calendarDate.isCurrentMonth,
+                                        calendarDate.isCurrentMonth &&
+                                        isTodayOrBefore(calendarDate),
                                     'bg-gray-300/20':
                                         !calendarDate.isCurrentMonth,
                                 }"
