@@ -6,34 +6,42 @@ use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
 it('can store diary comment', function () {
-    Http::fake([
-        'api.openai.com/*' => '
-        {
-            "choices": [
+    $this->travelTo(now(), function () {
+        Http::fake([
+            'api.openai.com/*' => '
                 {
-                    "message": {
-                        "role": "assistant",
-                        "content": "Hello"
-                    }
+                    "choices": [
+                        {
+                            "message": {
+                                "role": "assistant",
+                                "content": "Hello from assistant"
+                            }
+                        }
+                    ]
                 }
-            ]
-        }
-  ',
-    ]);
-
-    $user = User::factory()->create();
-    $diary = Diary::factory()->for($user)->create();
-
-    $response = $this->actingAs($user)
-        ->post(route('diaries.comments.store', ['diary' => $diary->date->format('Y-m-d')]), [
-            'content' => 'Hello',
+          ',
         ]);
 
-    $response->assertStatus(302);
+        $user = User::factory()->create();
 
-    $this->assertDatabaseHas('diary_comments', [
-        'content' => 'Hello',
-    ]);
+        $pastDiary = Diary::factory()->for($user)->create([
+            'date' => now()->subDay(),
+        ]);
+        $targetDiary = Diary::factory()->for($user)->create([
+            'date' => now(),
+        ]);
+
+        $response = $this->actingAs($user)
+            ->post(route('diaries.comments.store', ['diary' => $targetDiary->date->format('Y-m-d')]), [
+                'content' => 'Hello from user',
+            ]);
+
+        $response->assertStatus(302);
+
+        $this->assertDatabaseHas('diary_comments', [
+            'content' => 'Hello from assistant',
+        ]);
+    });
 });
 
 it('cannot store duplicate diary comment', function () {
