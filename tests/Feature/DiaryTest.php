@@ -89,7 +89,7 @@ it('cannot show the existing diary create page', function () {
 
     $response = $this->actingAs($user)->get(route('diaries.create', ['date' => '2025-01-01']));
 
-    $response->assertRedirect(route('diaries.index'));
+    $response->assertNotFound();
 });
 
 it('can store a diary', function () {

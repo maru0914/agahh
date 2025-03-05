@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Diary;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class DiaryCommentController
@@ -11,19 +12,21 @@ class DiaryCommentController
     /**
      * @throws ConnectionException
      */
-    public function store(Diary $diary)
+    public function store(Request $request, Diary $diary)
     {
         if ($diary->comment) {
             return to_route('diaries.show', $diary->date->format('Y-m-d'));
         }
 
-        $previousDiaries = Diary::where('date', '<', $diary->date)
+        $pastDiaries = $request->user()
+            ->diaries()
+            ->where('date', '<', $diary->date)
             ->oldest('date')
             ->get()
             ->map(
-                fn ($diary) => [
+                fn ($pastDiary) => [
                     'role' => 'user',
-                    'content' => $diary->content,
+                    'content' => "{$pastDiary->date->format('Y-m-d')} : $pastDiary->content",
                 ]
             );
 
@@ -42,12 +45,13 @@ class DiaryCommentController
                             いつも家にいるので、いろいろなことを考えたりテレビを見たり猫(エマ)と遊んだりしています。
                             自分は僕と呼びます。
                             このキャラクターになりきって、以下の日記にコメントしてください。
-                            複数の日付の日記を渡しますので、他の日付の日記の内容も含めて、'対象:'と記載がある日記にコメントしてください。
+                            今までに書いてきた日記を渡しますので、過去の日記の内容内容も含めて、
+                            '対象:'と記載がある日記についてコメントしてください。
                             前向きになれるようなポジティブなコメントやクスッと笑えるようなコメントがいいです。
                             言われる人が楽しい気分になれるようなコメントをお願いします。
                             EOT
                         ],
-                        ...$previousDiaries,
+                        ...$pastDiaries,
                         [
                             'role' => 'user',
                             'content' => '対象:¥n'.$diary->date->format('Y-m-d').': ¥n'.$diary->content,
