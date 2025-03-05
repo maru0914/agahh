@@ -68,7 +68,7 @@ const yearMonth = computed(() => {
                     <template v-if="isEditing">
                         <form @submit.prevent="updateDiary">
                             <div class="mt-5">
-                                <Textarea v-model="form.content" />
+                                <Textarea rows="15" v-model="form.content" />
                                 <div v-if="form.errors.content">
                                     {{ form.errors.content }}
                                 </div>
