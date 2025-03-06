@@ -38,6 +38,12 @@ const yearMonth = computed(() => {
     const month = String(dateObject.getMonth() + 1).padStart(2, '0');
     return year + month;
 });
+
+const dayOfWeek = computed(() => {
+    const dateObject = new Date(props.diary.date);
+    const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
+    return new Intl.DateTimeFormat('ja-JP', options).format(dateObject);
+});
 </script>
 
 <template>
@@ -56,7 +62,7 @@ const yearMonth = computed(() => {
                     </button>
                 </Link>
                 <h1 class="mt-4 text-2xl font-semibold text-gray-900">
-                    {{ diary.date }}
+                    {{ diary.date }} ({{ dayOfWeek }})
                 </h1>
                 <div class="mt-4 rounded-lg bg-white p-6 shadow">
                     <p class="mt-1 text-end text-sm text-gray-500">
