@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Actions\GenerateDiaryCalendarDates;
+use App\Actions\GenerateNextDiaryLink;
+use App\Actions\GeneratePreviousDiaryLink;
 use App\Http\Requests\Diary\IndexRequest;
 use App\Http\Requests\Diary\StoreRequest;
 use App\Http\Requests\Diary\UpdateRequest;
@@ -10,6 +12,7 @@ use App\Http\Resources\DiaryResource;
 use App\Models\Diary;
 use App\ValueObjects\YearMonth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -39,12 +42,18 @@ class DiaryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, string $date)
-    {
+    public function create(
+        Request $request,
+        GeneratePreviousDiaryLink $previousLinkAction,
+        GenerateNextDiaryLink $nextLinkAction,
+        string $date
+    ) {
         Gate::authorize('create', [Diary::class, $date]);
 
         return Inertia::render('Diary/Create', [
             'date' => $date,
+            'previousLink' => $previousLinkAction->handle($request->user(), Carbon::make($date)),
+            'nextLink' => $nextLinkAction->handle($request->user(), Carbon::make($date)),
         ]);
     }
 
@@ -67,14 +76,20 @@ class DiaryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Diary $diary)
-    {
+    public function show(
+        Request $request,
+        GeneratePreviousDiaryLink $previousLinkAction,
+        GenerateNextDiaryLink $nextLinkAction,
+        Diary $diary
+    ) {
         Gate::authorize('view', $diary);
 
         return Inertia::render('Diary/Show', [
             'diary' => DiaryResource::make(
                 $diary->load('comment')
             ),
+            'previousLink' => $previousLinkAction->handle($request->user(), $diary->date),
+            'nextLink' => $nextLinkAction->handle($request->user(), $diary->date),
         ]);
     }
 
