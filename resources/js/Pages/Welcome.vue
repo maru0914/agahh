@@ -1,22 +1,30 @@
 <script setup lang="ts">
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import ChatMessage from '@/Components/ChatMessage.vue';
 import { Button } from '@/Components/ui/button';
 import { Textarea } from '@/Components/ui/textarea';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { User } from '@/types';
 import { Message } from '@/types/chat';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, nextTick, onMounted, ref } from 'vue';
 
 const props = defineProps<{
+    auth: {
+        user: User;
+    };
     messagesInToday?: Message[];
 }>();
+const buddy = computed(() => {
+    return props.auth.user.buddy === 'agahh' ? 'アガー' : 'マル';
+});
 
 const messages = ref<Message[]>([
     {
         id: 1,
         role: 'assistant',
-        content: 'やあ！僕はアガーだよ',
+        content: `やあ、${buddy.value}だよ。元気？`,
     },
 ]);
 
@@ -90,12 +98,11 @@ onMounted(() => {
     <AuthenticatedLayout>
         <div class="mx-auto max-w-3xl px-3">
             <div class="mt-10 flex flex-col items-center">
-                <img
-                    src="/images/agahh.jpg"
-                    alt="Agahh"
+                <ApplicationLogo
+                    :buddy="$props.auth.user.buddy"
                     class="h-32 w-32 rounded-full"
                 />
-                <h2 class="text-xl font-bold">アガー</h2>
+                <h2 class="text-xl font-bold">{{ buddy }}</h2>
             </div>
             <div class="mt-4 space-y-4">
                 <ChatMessage
@@ -107,7 +114,7 @@ onMounted(() => {
             <form @submit.prevent="sendMessage()" class="mt-4">
                 <Textarea
                     class="my-4"
-                    placeholder="アガーにメッセージを送る"
+                    :placeholder="`${buddy}にメッセージを送る`"
                     v-model="content"
                     @keydown="handleKeyDown"
                     @compositionstart="isComposing = true"

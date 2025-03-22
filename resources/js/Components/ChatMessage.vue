@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Message } from '@/types/chat';
 import { computed } from 'vue';
 
@@ -11,10 +12,9 @@ const isSent = computed(() => props.message.role === 'user');
 
 <template>
     <div class="flex" :class="{ 'justify-end': isSent }">
-        <img
+        <ApplicationLogo
             v-if="!isSent"
-            src="/images/agahh.jpg"
-            alt="Agahh"
+            :buddy="$page.props.auth.user.buddy"
             class="mr-3 h-12 w-12 rounded-full"
         />
         <div

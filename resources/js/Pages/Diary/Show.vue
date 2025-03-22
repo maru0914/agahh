@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import PreviousNextLinks from '@/Components/diary/PreviousNextLinks.vue';
 import { Button } from '@/Components/ui/button';
 import { Textarea } from '@/Components/ui/textarea';
@@ -8,10 +9,19 @@ import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
+    auth: {
+        user: {
+            buddy: string;
+        };
+    };
     diary: Diary;
     previousLink: string;
     nextLink: string | null;
 }>();
+
+const buddy = computed(() => {
+    return props.auth.user.buddy === 'agahh' ? 'アガー' : 'マル';
+});
 
 const form = useForm({
     content: props.diary.content,
@@ -107,9 +117,8 @@ const dayOfWeek = computed(() => {
                     <div class="mt-4 rounded-lg bg-white p-6 shadow">
                         <div class="flex items-center">
                             <div class="mr-4 min-w-8 max-w-10">
-                                <img
-                                    src="/images/agahh-icon.png"
-                                    alt="application logo"
+                                <ApplicationLogo
+                                    :buddy="$page.props.auth.user.buddy"
                                 />
                             </div>
                             <p
@@ -123,7 +132,7 @@ const dayOfWeek = computed(() => {
             </div>
             <div v-else class="mt-4 flex justify-center">
                 <form @submit.prevent="addDiaryComment">
-                    <Button type="submit">アガーに見てもらう</Button>
+                    <Button type="submit">{{ buddy }}に見てもらう</Button>
                 </form>
             </div>
         </section>

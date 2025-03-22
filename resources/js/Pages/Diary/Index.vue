@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Button } from '@/Components/ui/button';
 import { CalendarDate } from '@/types/calendar';
 
@@ -108,9 +109,8 @@ const isTodayOrBefore = (calendarDate: CalendarDate) => {
                                     v-if="calendarDate.diaryId"
                                     class="flex justify-end"
                                 >
-                                    <img
-                                        src="/images/agahh-icon.png"
-                                        alt="application logo"
+                                    <ApplicationLogo
+                                        :buddy="$page.props.auth.user.buddy"
                                         class="h-6 w-6 md:h-8 md:w-8"
                                     />
                                 </div>
