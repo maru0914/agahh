@@ -1,7 +1,7 @@
 {
     "name": "アガー",
     "short_name": "アガー",
-    "description": "アガーに相談しながら楽しく過ごせるアプリ",
+    "description": "キャラクターに相談しながら楽しく過ごせるアプリ",
     "start_url": "/",
     "display": "standalone",
     "theme_color": "#00ff7f",
