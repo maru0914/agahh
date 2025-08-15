@@ -46,6 +46,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     日記
                                 </NavLink>
+                                <NavLink
+                                    :href="route('study-logs.index')"
+                                    :active="route().current('study-logs.*')"
+                                >
+                                    学習記録
+                                </NavLink>
                             </div>
                         </div>
 
@@ -158,6 +164,12 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('diaries.index')"
                         >
                             日記
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('study-logs.index')"
+                            :active="route().current('study-logs.index')"
+                        >
+                            学習記録
                         </ResponsiveNavLink>
                     </div>
 
