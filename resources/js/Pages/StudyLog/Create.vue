@@ -16,7 +16,7 @@ const form = useForm({
     subject: '',
     started_time: '' as string | null,
     ended_time: '' as string | null,
-    notes: '' as string | null,
+    notes: '' as string,
 });
 
 const occupied = computed(() => props.occupiedRanges ?? []);

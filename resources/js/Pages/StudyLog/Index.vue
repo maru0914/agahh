@@ -30,7 +30,7 @@ function formatMinutes(mins: number) {
 }
 function minutesFromDateTime(dt: string): number {
     // dt expected like 'YYYY-MM-DD HH:MM' or ISO; take the time portion safely
-    const time = (dt as any).toString().slice(11, 16);
+    const time = dt.slice(11, 16);
     const [h, m] = time.split(':').map((n) => parseInt(n, 10));
     if (Number.isFinite(h) && Number.isFinite(m)) {
         return h * 60 + m;
