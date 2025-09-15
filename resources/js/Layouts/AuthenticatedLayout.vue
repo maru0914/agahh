@@ -14,7 +14,7 @@ const showingNavigationDropdown = ref(false);
     <div>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav
-                class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
+                class="border-b border-gray-100 bg-white/90 shadow-sm backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/90"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -32,25 +32,28 @@ const showingNavigationDropdown = ref(false);
 
                             <!-- Navigation Links -->
                             <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                                class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex"
                             >
                                 <NavLink
                                     :href="route('home')"
                                     :active="route().current('home')"
+                                    class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 >
-                                    チャット
+                                    💬 チャット
                                 </NavLink>
                                 <NavLink
                                     :href="route('diaries.index')"
                                     :active="route().current('diaries.*')"
+                                    class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                 >
-                                    日記
+                                    📔 日記
                                 </NavLink>
                                 <NavLink
                                     :href="route('study-logs.index')"
                                     :active="route().current('study-logs.*')"
+                                    class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                                 >
-                                    学習記録
+                                    📚 学習記録
                                 </NavLink>
                             </div>
                         </div>

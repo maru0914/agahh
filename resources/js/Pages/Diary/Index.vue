@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { Calendar, ChevronLeft, ChevronRight, PenTool } from 'lucide-vue-next';
 
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { CalendarDate } from '@/types/calendar';
 
 const weekDays = ['月', '火', '水', '木', '金', '土', '日'];
@@ -33,91 +35,121 @@ const isTodayOrBefore = (calendarDate: CalendarDate) => {
         <Head title="日記" />
         <section class="relative py-8 sm:p-8">
             <div class="mx-auto w-full max-w-7xl px-4 lg:px-8 xl:px-14">
-                <div class="mb-5 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-4">
-                        <h5
-                            class="text-xl font-semibold leading-8 text-gray-900"
-                        >
-                            {{ year }}年{{ month }}月
-                        </h5>
-                        <div class="flex items-center gap-2">
-                            <Link :href="previousLink" :as="'button'">
-                                <ChevronLeft
-                                    class="cursor-pointer rounded text-gray-500 transition-all duration-300 hover:bg-gray-100 hover:text-gray-900"
-                                />
-                            </Link>
-                            <Link :href="nextLink" :as="'button'">
-                                <ChevronRight
-                                    class="cursor-pointer rounded text-gray-500 transition-all duration-300 hover:bg-gray-100 hover:text-gray-900"
-                                />
-                            </Link>
+                <Card class="mb-6">
+                    <CardHeader>
+                        <div class="flex items-center justify-between">
+                            <CardTitle class="flex items-center gap-3">
+                                <Calendar class="h-6 w-6 text-green-600" />
+                                {{ year }}年{{ month }}月の日記
+                            </CardTitle>
+                            <div class="flex items-center gap-2">
+                                <Link :href="previousLink" :as="'button'">
+                                    <Button variant="outline" size="icon">
+                                        <ChevronLeft class="h-4 w-4" />
+                                    </Button>
+                                </Link>
+                                <Link :href="nextLink" :as="'button'">
+                                    <Button variant="outline" size="icon">
+                                        <ChevronRight class="h-4 w-4" />
+                                    </Button>
+                                </Link>
+                                <Link
+                                    v-if="!isCurrentYearMonth"
+                                    :href="route('diaries.index')"
+                                    :as="'button'"
+                                >
+                                    <Button variant="outline">今月</Button>
+                                </Link>
+                            </div>
                         </div>
-                        <Link
-                            v-if="!isCurrentYearMonth"
-                            :href="route('diaries.index')"
-                            :as="'button'"
-                        >
-                            <Button variant="outline"> 今月</Button>
-                        </Link>
-                    </div>
-                </div>
-                <div class="border border-gray-200">
-                    <div
-                        class="grid grid-cols-7 divide-gray-200 border-b border-gray-200 bg-gray-50"
-                    >
-                        <div
-                            class="flex justify-center border-r border-gray-200 p-3.5"
-                            v-for="(day, index) in weekDays"
-                            :key="index"
-                        >
-                            <span class="text-sm font-medium text-gray-500">
-                                {{ day }}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-7 divide-gray-200">
-                        <Link
-                            v-for="calendarDate in calendarDates"
-                            :key="calendarDate.id"
-                            :href="
-                                calendarDate.diaryId
-                                    ? route('diaries.show', calendarDate.date)
-                                    : route('diaries.create', calendarDate.date)
-                            "
-                            :as="'button'"
-                            :disabled="!isTodayOrBefore(calendarDate)"
-                        >
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardContent class="p-0">
+                        <div class="grid grid-cols-7 border-b">
                             <div
-                                class="flex min-h-[70px] flex-col justify-between border-b border-r border-gray-200 p-2 transition-all duration-300 max-lg:items-center md:min-h-[80px] lg:h-28 xl:aspect-auto"
-                                :class="{
-                                    'cursor-pointer bg-gray-50 hover:bg-white':
-                                        calendarDate.isCurrentMonth &&
-                                        isTodayOrBefore(calendarDate),
-                                    'bg-gray-300/20':
-                                        !calendarDate.isCurrentMonth,
-                                }"
+                                class="flex justify-center border-r bg-gradient-to-b from-slate-50 to-slate-100 p-4"
+                                v-for="(day, index) in weekDays"
+                                :key="index"
+                                :class="{ 'border-r-0': index === 6 }"
                             >
                                 <span
-                                    class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-gray-500"
+                                    class="text-sm font-semibold text-slate-600"
+                                >
+                                    {{ day }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7">
+                            <Link
+                                v-for="calendarDate in calendarDates"
+                                :key="calendarDate.id"
+                                :href="
+                                    calendarDate.diaryId
+                                        ? route(
+                                              'diaries.show',
+                                              calendarDate.date,
+                                          )
+                                        : route(
+                                              'diaries.create',
+                                              calendarDate.date,
+                                          )
+                                "
+                                :as="'button'"
+                                :disabled="!isTodayOrBefore(calendarDate)"
+                            >
+                                <div
+                                    class="group relative flex min-h-[80px] flex-col justify-between border-b border-r p-3 transition-all duration-300 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 md:min-h-[90px] lg:h-32"
                                     :class="{
-                                        'bg-green-200': calendarDate.isToday,
+                                        'cursor-pointer':
+                                            calendarDate.isCurrentMonth &&
+                                            isTodayOrBefore(calendarDate),
+                                        'bg-slate-50/50':
+                                            !calendarDate.isCurrentMonth,
+                                        'border-r-0': calendarDate.id % 7 === 0,
+                                        'border-b-0':
+                                            calendarDate.id >
+                                            calendarDates!.length - 7,
                                     }"
                                 >
-                                    {{ getDate(calendarDate.date) }}
-                                </span>
-                                <div
-                                    v-if="calendarDate.diaryId"
-                                    class="flex justify-end"
-                                >
-                                    <ApplicationLogo
-                                        :buddy="$page.props.auth.user.buddy"
-                                        class="h-6 w-6 md:h-8 md:w-8"
-                                    />
+                                    <div
+                                        class="flex items-start justify-between"
+                                    >
+                                        <Badge
+                                            :variant="
+                                                calendarDate.isToday
+                                                    ? 'default'
+                                                    : 'outline'
+                                            "
+                                            :class="{
+                                                'bg-green-500 hover:bg-green-600':
+                                                    calendarDate.isToday,
+                                                'text-slate-400':
+                                                    !calendarDate.isCurrentMonth,
+                                            }"
+                                            class="text-xs font-medium"
+                                        >
+                                            {{ getDate(calendarDate.date) }}
+                                        </Badge>
+                                        <PenTool
+                                            v-if="calendarDate.diaryId"
+                                            class="h-4 w-4 text-green-600 opacity-70 transition-opacity group-hover:opacity-100"
+                                        />
+                                    </div>
+                                    <div
+                                        v-if="calendarDate.diaryId"
+                                        class="flex justify-end opacity-80 transition-opacity group-hover:opacity-100"
+                                    >
+                                        <ApplicationLogo
+                                            :buddy="$page.props.auth.user.buddy"
+                                            class="h-8 w-8 md:h-10 md:w-10"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
+                            </Link>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </section>
     </AuthenticatedLayout>

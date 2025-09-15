@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { BookOpen, Calendar, Clock } from 'lucide-vue-next';
 
 defineProps<{
     year: number;
@@ -95,100 +98,141 @@ function minutesFromDateTime(dt: string): number {
                     </div>
                 </div>
 
-                <div class="rounded-lg bg-white p-6 shadow">
-                    <div class="mb-4 flex items-center justify-between">
-                        <p class="text-gray-700">合計学習時間</p>
-                        <p class="text-lg font-semibold">
+                <Card class="mb-6">
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <Clock class="h-5 w-5 text-blue-600" />
+                            合計学習時間
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-2xl font-bold text-blue-600">
                             {{ formatMinutes(totalMinutes) }}
                         </p>
-                    </div>
+                    </CardContent>
+                </Card>
 
-                    <div v-if="logs.length" class="space-y-1">
-                        <Link
-                            v-for="log in logs"
-                            :key="log.id"
-                            :href="route('study-logs.show', log.id)"
-                            :as="'button'"
-                            class="block w-full"
+                <div v-if="logs.length" class="space-y-4">
+                    <Link
+                        v-for="log in logs"
+                        :key="log.id"
+                        :href="route('study-logs.show', log.id)"
+                        :as="'button'"
+                        class="block w-full"
+                    >
+                        <Card
+                            class="transition-all duration-200 hover:scale-[1.02] hover:shadow-md"
                         >
-                            <div
-                                class="flex items-start justify-between rounded border-b border-gray-100 p-3 text-left hover:bg-gray-50"
-                            >
-                                <div class="min-w-0 flex-1">
-                                    <div class="mb-1 flex items-center gap-2">
-                                        <p
-                                            class="text-sm font-medium text-gray-900"
+                            <CardContent class="p-6">
+                                <div class="flex items-start justify-between">
+                                    <div class="min-w-0 flex-1">
+                                        <div
+                                            class="mb-3 flex items-center gap-3"
                                         >
-                                            {{ log.studied_at }}
-                                        </p>
-                                        <span
+                                            <Badge
+                                                variant="outline"
+                                                class="flex items-center gap-1"
+                                            >
+                                                <Calendar class="h-3 w-3" />
+                                                {{ log.studied_at }}
+                                            </Badge>
+                                            <Badge
+                                                v-if="
+                                                    log.started_at &&
+                                                    log.ended_at
+                                                "
+                                                variant="secondary"
+                                                class="flex items-center gap-1"
+                                            >
+                                                <Clock class="h-3 w-3" />
+                                                {{
+                                                    (log.started_at as any)
+                                                        .toString()
+                                                        .slice(11, 16)
+                                                }}
+                                                -
+                                                {{
+                                                    (log.ended_at as any)
+                                                        .toString()
+                                                        .slice(11, 16)
+                                                }}
+                                            </Badge>
+                                        </div>
+                                        <div
+                                            class="mb-3 flex items-center gap-2"
+                                        >
+                                            <BookOpen
+                                                class="h-5 w-5 text-gray-600"
+                                            />
+                                            <h3
+                                                class="text-lg font-semibold text-gray-900"
+                                            >
+                                                {{ log.subject }}
+                                            </h3>
+                                        </div>
+                                        <div
                                             v-if="
                                                 log.started_at && log.ended_at
                                             "
-                                            class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
+                                            class="h-2 w-full max-w-md rounded-full bg-gray-100"
+                                        >
+                                            <div
+                                                class="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
+                                                :style="{
+                                                    width:
+                                                        ((minutesFromDateTime(
+                                                            log.ended_at as any,
+                                                        ) -
+                                                            minutesFromDateTime(
+                                                                log.started_at as any,
+                                                            )) /
+                                                            1440) *
+                                                            100 +
+                                                        '%',
+                                                    marginLeft:
+                                                        (minutesFromDateTime(
+                                                            log.started_at as any,
+                                                        ) /
+                                                            1440) *
+                                                            100 +
+                                                        '%',
+                                                }"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="ml-6 flex-shrink-0 text-right">
+                                        <div
+                                            class="text-2xl font-bold text-blue-600"
                                         >
                                             {{
-                                                (log.started_at as any)
-                                                    .toString()
-                                                    .slice(11, 16)
+                                                formatMinutes(
+                                                    log.duration_minutes,
+                                                )
                                             }}
-                                            -
-                                            {{
-                                                (log.ended_at as any)
-                                                    .toString()
-                                                    .slice(11, 16)
-                                            }}
-                                        </span>
-                                    </div>
-                                    <p
-                                        class="mb-2 text-base font-semibold text-gray-900"
-                                    >
-                                        {{ log.subject }}
-                                    </p>
-                                    <div
-                                        v-if="log.started_at && log.ended_at"
-                                        class="h-2 w-full max-w-md rounded bg-gray-100"
-                                    >
-                                        <div
-                                            class="h-2 rounded bg-blue-400"
-                                            :style="{
-                                                width:
-                                                    ((minutesFromDateTime(
-                                                        log.ended_at as any,
-                                                    ) -
-                                                        minutesFromDateTime(
-                                                            log.started_at as any,
-                                                        )) /
-                                                        1440) *
-                                                        100 +
-                                                    '%',
-                                                marginLeft:
-                                                    (minutesFromDateTime(
-                                                        log.started_at as any,
-                                                    ) /
-                                                        1440) *
-                                                        100 +
-                                                    '%',
-                                            }"
-                                        />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="ml-4 flex-shrink-0 text-right">
-                                    <div
-                                        class="text-lg font-semibold text-blue-600"
-                                    >
-                                        {{
-                                            formatMinutes(log.duration_minutes)
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-                    <div v-else class="text-center text-gray-500">
-                        この月の学習記録はありません。
-                    </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
                 </div>
+                <Card v-else class="py-12 text-center">
+                    <CardContent>
+                        <BookOpen
+                            class="mx-auto mb-4 h-12 w-12 text-gray-400"
+                        />
+                        <p class="text-lg text-gray-500">
+                            この月の学習記録はありません。
+                        </p>
+                        <Link
+                            :href="route('study-logs.create')"
+                            :as="'button'"
+                            class="mt-4 inline-block"
+                        >
+                            <Button>最初の学習を記録する</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
             </div>
         </section>
     </AuthenticatedLayout>
