@@ -146,15 +146,11 @@ const selectionStyle = computed(() => {
 
 <template>
     <div class="w-full">
-        <div class="mb-2 flex justify-between text-xs text-gray-500">
-            <span>{{ startTime ?? '開始未選択' }}</span>
-            <span>{{ endTime ?? '終了未選択' }}</span>
-        </div>
         <div
             ref="container"
-            class="relative h-10 w-full select-none rounded border border-gray-300 bg-gray-100"
+            class="relative h-12 w-full cursor-crosshair select-none rounded-lg border border-gray-300 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-sm transition-shadow hover:shadow-md"
             @mousedown="onMouseDown"
-            title="ドラッグで時間帯を選択"
+            title="ドラッグで時間帯を選択してください"
         >
             <!-- hour ticks -->
             <div class="absolute inset-0">
@@ -179,27 +175,75 @@ const selectionStyle = computed(() => {
             </div>
             <!-- selection -->
             <div
-                class="absolute top-0 h-full rounded"
-                :class="hasOverlap ? 'bg-red-400/70' : 'bg-green-400/70'"
+                class="absolute top-0 h-full rounded-md border-2"
+                :class="
+                    hasOverlap
+                        ? 'border-red-500 bg-red-400/60'
+                        : 'border-emerald-500 bg-emerald-400/70'
+                "
                 :style="selectionStyle"
-            ></div>
+            >
+                <!-- Selection time labels inside the bar -->
+                <div
+                    v-if="
+                        startMin !== null &&
+                        endMin !== null &&
+                        Math.abs(endMin - startMin) > 60
+                    "
+                    class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white drop-shadow"
+                >
+                    {{ durationText }}
+                </div>
+            </div>
         </div>
-        <div
-            class="mt-1 flex items-center justify-between text-[10px] text-gray-400"
-        >
-            <div class="flex gap-4">
-                <span>00:00</span>
-                <span>06:00</span>
-                <span>12:00</span>
-                <span>18:00</span>
-                <span>24:00</span>
+        <!-- Time scale -->
+        <div class="mt-2">
+            <div class="relative h-3 text-[10px] text-gray-400">
+                <span class="absolute" style="left: 0%">00:00</span>
+                <span
+                    class="absolute"
+                    style="left: 25%; transform: translateX(-50%)"
+                    >06:00</span
+                >
+                <span
+                    class="absolute"
+                    style="left: 50%; transform: translateX(-50%)"
+                    >12:00</span
+                >
+                <span
+                    class="absolute"
+                    style="left: 75%; transform: translateX(-50%)"
+                    >18:00</span
+                >
+                <span
+                    class="absolute"
+                    style="left: 100%; transform: translateX(-100%)"
+                    >24:00</span
+                >
+            </div>
+        </div>
+        <!-- Status information -->
+        <div class="mt-3 flex items-center justify-between">
+            <div class="flex items-center gap-3 text-sm">
+                <div
+                    v-if="startTime && endTime"
+                    class="flex items-center gap-2 text-gray-700"
+                >
+                    <div class="h-2 w-2 rounded-full bg-emerald-400"></div>
+                    <span>{{ startTime }} - {{ endTime }}</span>
+                </div>
+                <div v-else class="text-gray-400">時間帯を選択してください</div>
             </div>
             <div
-                class="text-[11px]"
-                :class="hasOverlap ? 'text-red-600' : 'text-gray-500'"
+                class="text-sm"
+                :class="hasOverlap ? 'text-red-600' : 'text-emerald-600'"
             >
-                <span v-if="durationText">選択中: {{ durationText }}</span>
-                <span v-if="hasOverlap" class="ml-2">重複しています</span>
+                <span v-if="durationText && !hasOverlap" class="font-medium">{{
+                    durationText
+                }}</span>
+                <span v-if="hasOverlap" class="font-medium"
+                    >⚠ 重複しています</span
+                >
             </div>
         </div>
     </div>

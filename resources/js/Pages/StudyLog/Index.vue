@@ -49,32 +49,50 @@ function minutesFromDateTime(dt: string): number {
         <Head title="学習記録" />
         <section class="relative py-8 sm:p-8">
             <div class="mx-auto w-full max-w-5xl px-4 lg:px-8">
-                <div class="mb-5 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-4">
-                        <h5
-                            class="text-xl font-semibold leading-8 text-gray-900"
+                <div class="mb-5">
+                    <div
+                        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                        <div
+                            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
                         >
-                            {{ year }}年{{ month }}月
-                        </h5>
-                        <div class="flex items-center gap-2">
-                            <Link :href="previousLink" :as="'button'">
-                                <Button variant="outline">前へ</Button>
-                            </Link>
-                            <Link :href="nextLink" :as="'button'">
-                                <Button variant="outline">次へ</Button>
-                            </Link>
-                            <Link
-                                v-if="!isCurrentYearMonth"
-                                :href="route('study-logs.index')"
-                                :as="'button'"
+                            <h5
+                                class="text-xl font-semibold leading-8 text-gray-900"
                             >
-                                <Button variant="outline">今月</Button>
-                            </Link>
+                                {{ year }}年{{ month }}月
+                            </h5>
+                            <div class="flex items-center gap-2">
+                                <Link :href="previousLink" :as="'button'">
+                                    <Button
+                                        variant="outline"
+                                        class="px-3 py-1 text-sm"
+                                        >前へ</Button
+                                    >
+                                </Link>
+                                <Link :href="nextLink" :as="'button'">
+                                    <Button
+                                        variant="outline"
+                                        class="px-3 py-1 text-sm"
+                                        >次へ</Button
+                                    >
+                                </Link>
+                                <Link
+                                    v-if="!isCurrentYearMonth"
+                                    :href="route('study-logs.index')"
+                                    :as="'button'"
+                                >
+                                    <Button
+                                        variant="outline"
+                                        class="px-3 py-1 text-sm"
+                                        >今月</Button
+                                    >
+                                </Link>
+                            </div>
                         </div>
+                        <Link :href="route('study-logs.create')" :as="'button'">
+                            <Button class="w-full sm:w-auto">学習を記録</Button>
+                        </Link>
                     </div>
-                    <Link :href="route('study-logs.create')" :as="'button'">
-                        <Button>学習を記録</Button>
-                    </Link>
                 </div>
 
                 <div class="rounded-lg bg-white p-6 shadow">
@@ -85,24 +103,29 @@ function minutesFromDateTime(dt: string): number {
                         </p>
                     </div>
 
-                    <div v-if="logs.length" class="divide-y">
+                    <div v-if="logs.length" class="space-y-1">
                         <Link
                             v-for="log in logs"
                             :key="log.id"
                             :href="route('study-logs.show', log.id)"
                             :as="'button'"
+                            class="block w-full"
                         >
                             <div
-                                class="flex items-center justify-between py-3 text-left"
+                                class="flex items-start justify-between rounded border-b border-gray-100 p-3 text-left hover:bg-gray-50"
                             >
-                                <div>
-                                    <p class="text-sm text-gray-500">
-                                        {{ log.studied_at }}
+                                <div class="min-w-0 flex-1">
+                                    <div class="mb-1 flex items-center gap-2">
+                                        <p
+                                            class="text-sm font-medium text-gray-900"
+                                        >
+                                            {{ log.studied_at }}
+                                        </p>
                                         <span
                                             v-if="
                                                 log.started_at && log.ended_at
                                             "
-                                            class="ml-2 text-xs text-gray-400"
+                                            class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
                                         >
                                             {{
                                                 (log.started_at as any)
@@ -116,16 +139,18 @@ function minutesFromDateTime(dt: string): number {
                                                     .slice(11, 16)
                                             }}
                                         </span>
-                                    </p>
-                                    <p class="font-medium text-gray-900">
+                                    </div>
+                                    <p
+                                        class="mb-2 text-base font-semibold text-gray-900"
+                                    >
                                         {{ log.subject }}
                                     </p>
                                     <div
                                         v-if="log.started_at && log.ended_at"
-                                        class="mt-2 h-2 w-full rounded bg-gray-100"
+                                        class="h-2 w-full max-w-md rounded bg-gray-100"
                                     >
                                         <div
-                                            class="h-2 rounded bg-green-400"
+                                            class="h-2 rounded bg-blue-400"
                                             :style="{
                                                 width:
                                                     ((minutesFromDateTime(
@@ -148,8 +173,14 @@ function minutesFromDateTime(dt: string): number {
                                         />
                                     </div>
                                 </div>
-                                <div class="text-gray-700">
-                                    {{ formatMinutes(log.duration_minutes) }}
+                                <div class="ml-4 flex-shrink-0 text-right">
+                                    <div
+                                        class="text-lg font-semibold text-blue-600"
+                                    >
+                                        {{
+                                            formatMinutes(log.duration_minutes)
+                                        }}
+                                    </div>
                                 </div>
                             </div>
                         </Link>
