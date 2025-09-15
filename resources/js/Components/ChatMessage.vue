@@ -11,22 +11,35 @@ const isSent = computed(() => props.message.role === 'user');
 </script>
 
 <template>
-    <div class="flex" :class="{ 'justify-end': isSent }">
-        <ApplicationLogo
-            v-if="!isSent"
-            :buddy="$page.props.auth.user.buddy"
-            class="mr-3 h-12 w-12 rounded-full"
-        />
+    <div class="group flex" :class="{ 'justify-end': isSent }">
+        <!-- アシスタントのアバター -->
+        <div v-if="!isSent" class="mr-3 flex-shrink-0">
+            <ApplicationLogo
+                :buddy="$page.props.auth.user.buddy"
+                class="h-10 w-10 rounded-full shadow-lg ring-2 ring-purple-200 transition-transform duration-200 group-hover:scale-105 dark:ring-purple-700"
+            />
+        </div>
+
+        <!-- メッセージバブル -->
         <div
-            class="leading-1.5 relative flex w-full max-w-[320px] flex-col rounded-e-xl rounded-s-xl border-gray-200 p-4"
+            class="relative max-w-[85%] transform transition-all duration-300 hover:scale-[1.01] sm:max-w-[75%] md:max-w-[65%]"
             :class="{
-                'bg-blue-100': isSent,
-                'bg-gray-100': !isSent,
+                'order-1': isSent,
+                'order-2': isSent,
             }"
         >
-            <div class="flex items-center">
+            <!-- メッセージコンテンツ -->
+            <div
+                class="rounded-2xl border-0 px-5 py-4 shadow-md transition-all duration-300"
+                :class="{
+                    'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-purple-200/40 dark:shadow-purple-900/40':
+                        isSent,
+                    'bg-white/98 dark:bg-gray-700/98 text-gray-800 shadow-gray-200/40 backdrop-blur-sm dark:text-gray-100 dark:shadow-gray-800/40':
+                        !isSent,
+                }"
+            >
                 <p
-                    class="whitespace-pre-wrap py-2.5 text-sm font-normal text-gray-900 dark:text-white"
+                    class="whitespace-pre-wrap text-sm font-medium leading-relaxed tracking-wide"
                 >
                     {{ message.content }}
                 </p>
