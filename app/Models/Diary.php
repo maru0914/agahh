@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon $date
+ */
 class Diary extends Model
 {
     /** @use HasFactory<DiaryFactory> */
@@ -25,11 +28,13 @@ class Diary extends Model
         ];
     }
 
+    /** @return HasOne<DiaryComment, $this> */
     public function comment(): HasOne
     {
         return $this->hasOne(DiaryComment::class, 'diary_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

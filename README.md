@@ -103,14 +103,67 @@ level 6 で baseline を作るなら 7 まで同時に上げられる。
 2. baseline に入れたまま放置せず、種類ごとに少しずつ外して直す。件数ではなく「種類が1つ消えた」を単位にする。
 3. level 8 は、null 安全性の型付けが済んでから上げる。件数だけを見て先に上げない。
 
-### 次に確かめること（仮説）
+### 仮説と、その検証（同日 13:30〜13:45）
 
-level 6 の `missingType.generics`（リレーションの型引数）を埋めると、
-level 5 の `property.notFound` 7 件も同時に消えるのではないか。
-`Diary::comment(): HasOne` を `HasOne<DiaryComment, $this>` と書けば、
-`$diary->comment->content` が `Model::$content` ではなく `DiaryComment::$content` として解決されるはず。
-1 段上のルールを満たすことが 1 段下の件数を減らす、という関係が成り立つなら、
-baseline を外していく順番はこの依存関係に沿って決めるのが速い。
+立てた仮説は「level 6 の `missingType.generics`（リレーションの型引数）を埋めると、
+level 5 の `property.notFound` も同時に消えるのではないか」。**当たった。**
+
+手を1つずつ加えて、そのつど level 5 を測り直した。
+
+| 手 | 変更した量 | level 5 |
+| --- | --- | ---: |
+| 0 | ― | 22 |
+| 1 | 5 モデル（Diary・DiaryComment・Message・StudyLog・User）のリレーションに型引数 9 行 | 16 |
+| 2 | `Diary` に `@property \Illuminate\Support\Carbon $date` 1 行 | 6 |
+| 3 | `StudyLog` に `@property` 3 行／`StudyLogController` の不要な `??` を 4 か所削除 | 1 |
+
+3 段すべてを入れたあとの各 level:
+
+| level | 導入時 | 対応後 | 差 |
+| ---: | ---: | ---: | ---: |
+| 5 | 22 | 1 | −21 |
+| 6 | 59 | 30 | −29 |
+| 8 | 105 | 77 | −28 |
+
+### 分かったこと
+
+**1. 1 つの型注釈が 2 つの level に効く。**
+リレーションに型引数を付けた 9 行は、level 5 の `property.notFound` 7 件を消すと同時に、
+level 6 の `missingType.generics` を 15 件から 8 件に減らした。
+baseline を外していく順番は、この依存関係に沿って上の段から決めるのが速い。
+
+**2. `property.notFound` が消えると、より具体的な誤りが現れる。**
+「`Model::$date` は未定義」が「`format()` を `string` には呼べない」に変わった。
+PHPStan がプロパティを見えるようになった結果、今度はその型が違うと言ってきた。
+件数が減らない段階でも、メッセージの具体性が上がっていれば前進している。
+
+**3. `casts()` の書式指定つきキャストは Carbon に解決されない。**
+`'date' => 'datetime:Y-m-d'`（`StudyLog` は `'date:Y-m-d'`・`'datetime:Y-m-d H:i'`）は
+`string` として扱われ、`format()` の呼び出しが 9 件のエラーになっていた。
+`@property` で型を明示すると 10 件が一度に消えた。キャストの書き方は変えていない。
+
+**4. 22 件のうち、コードの振る舞いを直したのは 4 件だけだった。**
+残りはすべて型情報を書いていないことによる指摘で、注釈 13 行で解消した。
+「静的解析の件数」を仕事の量と読むと見誤る。まず型注釈で何件落ちるかを測ってから、残りを見る。
+
+**5. 型を通すための変更が、実行時の仕様を変えることがある。**
+最後の 1 件（`VerifyEmailController`）を消すために `User` へ `implements MustVerifyEmail` を付けたところ、
+PHPStan は 0 件になったが、同時に (a) 新規登録時に確認メールが送られるようになり、
+(b) `routes/web.php` の `dashboard` に貼ってある `verified` ミドルウェアが実際に働くようになった。
+メール配信はこのアプリでまだ作っていないため、インターフェースは戻した。
+この 1 件は理由を書いて baseline に凍結する。
+
+静的解析の指摘に対しては毎回 3 択で、どれを選んだかを残す:
+**直す** / **型で保証を渡す** / **根拠つきで凍結する**。
+
+### 残っている仕事
+
+- level 8 の 77 件のうち 47 件は `auth()->user()` が `App\Models\User|null` であることに由来する（未着手）。
+  `$request->user()` を使う、`@property` を書く、明示的な null 検査を入れる、のどれで揃えるかを決める。
+- level 6 の 30 件は `missingType.return` 15／`missingType.iterableValue` 6／`missingType.generics` 8／`argument.type` 1。
+  いずれも機械的に埋められる。
+- `YearMonth::toCarbon()` の `return.type` 2 件は、戻り値が `Carbon|null` なのに `Carbon` と宣言している。
+  これは型注釈ではなく実装の側を見る必要がある。
 
 ### 環境についての記録
 

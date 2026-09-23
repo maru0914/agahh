@@ -85,8 +85,8 @@ class StudyLogController extends Controller
 
         // Compose started_at / ended_at if times provided
         if (! empty($data['started_time']) && ! empty($data['ended_time'])) {
-            $data['started_at'] = $data['studied_at'].' '.($data['started_time'] ?? '00:00');
-            $data['ended_at'] = $data['studied_at'].' '.($data['ended_time'] ?? '00:00');
+            $data['started_at'] = $data['studied_at'].' '.($data['started_time']);
+            $data['ended_at'] = $data['studied_at'].' '.($data['ended_time']);
             unset($data['started_time'], $data['ended_time']);
 
             // Derive duration from time range
@@ -138,8 +138,8 @@ class StudyLogController extends Controller
         $data = $request->validated();
 
         if (! empty($data['started_time']) && ! empty($data['ended_time'])) {
-            $data['started_at'] = $data['studied_at'].' '.($data['started_time'] ?? '00:00');
-            $data['ended_at'] = $data['studied_at'].' '.($data['ended_time'] ?? '00:00');
+            $data['started_at'] = $data['studied_at'].' '.($data['started_time']);
+            $data['ended_at'] = $data['studied_at'].' '.($data['ended_time']);
             unset($data['started_time'], $data['ended_time']);
 
             $start = \Illuminate\Support\Carbon::make($data['started_at']);

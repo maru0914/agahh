@@ -47,11 +47,13 @@ class User extends Authenticatable
         ];
     }
 
+    /** @return HasMany<Diary, $this> */
     public function diaries(): HasMany
     {
         return $this->hasMany(Diary::class);
     }
 
+    /** @return HasMany<Message, $this> */
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);

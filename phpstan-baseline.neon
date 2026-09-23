@@ -13,47 +13,17 @@ parameters:
 			path: app/Actions/GenerateDiaryCalendarDates.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Actions/GenerateNextDiaryLink.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Actions/GeneratePreviousDiaryLink.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/ChatController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/ChatController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\Api\\ChatController\:\:__invoke\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: app/Http/Controllers/Api/ChatController.php
 
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Http/Controllers/Api/ChatController.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: app/Http/Controllers/Api/ChatController.php
-
+        # メール確認機能は未実装。User は MustVerifyEmail を実装していない
+        # Verified イベントに渡す型が合わない。このコントローラとルート
+        # （routes/auth.php の verification.verify）は Breezeの雛形が残っているだけ。
+        # 型のために User へ implements MustVerifyEmail を付けると、新規登録確認メールが送られ、dashboard の verifiedミドルウェアも有効になるため戻した。
+        # メール配信を実装するときに、インターフェースを付けて解消する。
+        # 2026-09-23
 		-
 			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
 			identifier: argument.type
@@ -61,34 +31,10 @@ parameters:
 			path: app/Http/Controllers/Auth/VerifyEmailController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/DiaryCommentController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$date\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/DiaryCommentController.php
-
-		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: app/Http/Controllers/DiaryCommentController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\DiaryCommentController\:\:store\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: app/Http/Controllers/DiaryCommentController.php
-
-		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/DiaryController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\DiaryController\:\:create\(\) has no return type specified\.$#'
@@ -127,24 +73,6 @@ parameters:
 			path: app/Http/Controllers/DiaryController.php
 
 		-
-			message: '#^Parameter \#2 \$date of method App\\Actions\\GenerateNextDiaryLink\:\:handle\(\) expects Illuminate\\Support\\Carbon, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/DiaryController.php
-
-		-
-			message: '#^Parameter \#2 \$date of method App\\Actions\\GeneratePreviousDiaryLink\:\:handle\(\) expects Illuminate\\Support\\Carbon, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/DiaryController.php
-
-		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/StudyLogController.php
-
-		-
 			message: '#^Method App\\Http\\Controllers\\StudyLogController\:\:create\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -179,24 +107,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: app/Http/Controllers/StudyLogController.php
-
-		-
-			message: '#^Offset ''ended_time'' on non\-empty\-array\<string, mixed\> on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 2
-			path: app/Http/Controllers/StudyLogController.php
-
-		-
-			message: '#^Offset ''started_time'' on non\-empty\-array\<string, mixed\> on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 2
-			path: app/Http/Controllers/StudyLogController.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:today\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Http/Controllers/WelcomeController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\WelcomeController\:\:__invoke\(\) has no return type specified\.$#'
@@ -235,46 +145,16 @@ parameters:
 			path: app/Http/Requests/StudyLog/UpdateRequest.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/DiaryResource.php
-
-		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Resources/DiaryResource.php
-
-		-
 			message: '#^Method App\\Http\\Resources\\DiaryResource\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Resources/DiaryResource.php
 
 		-
-			message: '#^Method App\\Models\\Diary\:\:comment\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Diary.php
-
-		-
 			message: '#^Method App\\Models\\Diary\:\:scopeSameMonth\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/Diary.php
-
-		-
-			message: '#^Method App\\Models\\Diary\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Diary.php
-
-		-
-			message: '#^Method App\\Models\\DiaryComment\:\:diary\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/DiaryComment.php
 
 		-
 			message: '#^Class App\\Models\\Message uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
@@ -289,34 +169,10 @@ parameters:
 			path: app/Models/Message.php
 
 		-
-			message: '#^Method App\\Models\\Message\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Message.php
-
-		-
 			message: '#^Class App\\Models\\StudyLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
 			path: app/Models/StudyLog.php
-
-		-
-			message: '#^Method App\\Models\\StudyLog\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/StudyLog.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:diaries\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:messages\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/User.php
 
 		-
 			message: '#^Class Database\\Factories\\MessageFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'

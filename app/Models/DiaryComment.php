@@ -16,6 +16,7 @@ class DiaryComment extends Model
         'content',
     ];
 
+    /** @return BelongsTo<Diary, $this> */
     public function diary(): BelongsTo
     {
         return $this->belongsTo(Diary::class);
