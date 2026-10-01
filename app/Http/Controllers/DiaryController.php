@@ -24,7 +24,7 @@ class DiaryController extends Controller
     public function index(
         IndexRequest $request,
         GenerateDiaryCalendarDates $action
-    ) {
+    ): \Inertia\Response {
 
         $yearMonth = YearMonth::fromString($request->input('yearMonth'));
         $calendarDates = $action->handle($request->user(), $yearMonth);

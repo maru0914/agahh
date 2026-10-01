@@ -9,13 +9,14 @@ use App\ValueObjects\YearMonth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class StudyLogController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         Gate::authorize('viewAny', StudyLog::class);
 
